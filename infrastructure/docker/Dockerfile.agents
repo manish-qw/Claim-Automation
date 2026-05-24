@@ -1,0 +1,29 @@
+# infrastructure/docker/Dockerfile.agents
+# ─────────────────────────────────────────────────────────────────────────────
+# PURPOSE:
+#     Docker image for the agent worker process.
+#     Runs the Kafka consumer loop that triggers all agent pipelines.
+#
+# WHAT GOES HERE:
+#     Base image: python:3.11-slim
+#     Additional system deps: libgomp1 (for scikit-learn/PyTorch),
+#                             libgl1-mesa-glx (for PaddleOCR image processing)
+#     Install all Python dependencies via poetry
+#     Download ML model on build (LayoutLMv3 from Hugging Face)
+#     Copy source code
+#     CMD: python -m orchestration.orchestrator_agent
+#          (starts the Kafka consumer event loop)
+#
+#     MODEL CACHING:
+#         LayoutLMv3 and BAAI/bge-large models downloaded at build time
+#         and cached in the image layer. This avoids download delays
+#         at runtime and makes model version explicit in the image tag.
+#
+#     RESOURCE REQUIREMENTS:
+#         Memory: 4GB minimum (ML models in memory)
+#         CPU: 2 cores minimum
+#         GPU: optional — if CUDA available, PaddleOCR uses GPU automatically
+#
+#     HEALTHCHECK:
+#         Check that the Kafka consumer is running and connected.
+# ─────────────────────────────────────────────────────────────────────────────

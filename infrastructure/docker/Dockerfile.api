@@ -1,0 +1,27 @@
+# infrastructure/docker/Dockerfile.api
+# ─────────────────────────────────────────────────────────────────────────────
+# PURPOSE:
+#     Docker image for the FastAPI application (api/main.py).
+#
+# WHAT GOES HERE:
+#     Base image: python:3.11-slim
+#     Install system dependencies: libpq-dev (for asyncpg), curl (healthcheck)
+#     Copy pyproject.toml + poetry.lock and install dependencies
+#     Copy application source code
+#     Expose port 8000
+#     CMD: uvicorn api.main:app --host 0.0.0.0 --port 8000 --workers 4
+#
+#     HEALTHCHECK:
+#         curl -f http://localhost:8000/health/live || exit 1
+#         Interval: 30s, Timeout: 10s, Retries: 3
+#
+#     MULTI-STAGE BUILD (optional for production):
+#         Stage 1 (builder): install all deps including dev deps
+#         Stage 2 (runtime): copy only production artifacts
+#         Reduces final image size by ~40%
+#
+#     ENVIRONMENT:
+#         PYTHONDONTWRITEBYTECODE=1
+#         PYTHONUNBUFFERED=1
+#         All secrets via .env file (not baked into image)
+# ─────────────────────────────────────────────────────────────────────────────

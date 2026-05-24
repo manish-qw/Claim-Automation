@@ -1,0 +1,122 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CLAIMOS AI — Local Development Stack
+#
+# Services started by this file:
+#   postgres    — PostgreSQL 16 (primary claim data store)
+#   redpanda    — Kafka-compatible message broker (lightweight, no ZooKeeper)
+#   neo4j       — Neo4j 5 graph database (fraud network)
+#   localstack  — AWS service emulation (S3, QLDB, DynamoDB, SQS)
+#   redis       — Redis (event gate state, circuit breaker counters)
+#   api         — FastAPI application (built from Dockerfile.api)
+#   agents      — Agent worker process (built from Dockerfile.agents)
+#
+# Usage:
+#   docker-compose up -d          # Start all services
+#   docker-compose logs -f api    # Follow API logs
+#   docker-compose down -v        # Stop and remove volumes
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  postgres:
+    # What goes here:
+    # PostgreSQL 16 with a dedicated claimos database.
+    # Runs the 001_initial_schema.sql migration on first start.
+    # Exposes port 5432 for local development access.
+    image: postgres:16
+    environment:
+      POSTGRES_DB: claimos
+      POSTGRES_USER: claimos
+      POSTGRES_PASSWORD: claimos_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./shared/db/migrations:/docker-entrypoint-initdb.d
+
+  redpanda:
+    # What goes here:
+    # Redpanda — Kafka-compatible, single-node, no ZooKeeper needed.
+    # All Kafka topics are auto-created on first publish.
+    # Exposes ports 9092 (Kafka API) and 9644 (admin API).
+    image: redpandadata/redpanda:latest
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+
+  neo4j:
+    # What goes here:
+    # Neo4j 5 Community Edition for the fraud network graph.
+    # Exposes port 7687 (Bolt) and 7474 (browser UI).
+    # No auth in development (NEO4J_AUTH=none).
+    image: neo4j:5
+    environment:
+      NEO4J_AUTH: none
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+
+  localstack:
+    # What goes here:
+    # LocalStack — emulates AWS services for local development.
+    # Services emulated: s3, qldb, dynamodb, sqs.
+    # S3 buckets and DynamoDB tables auto-created via init scripts.
+    image: localstack/localstack:latest
+    environment:
+      SERVICES: s3,qldb,dynamodb,sqs
+      DEFAULT_REGION: ap-south-1
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack_data:/var/lib/localstack
+
+  redis:
+    # What goes here:
+    # Redis for event gate state (tracking which Kafka events arrived)
+    # and circuit breaker counters per external API endpoint.
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    # What goes here:
+    # FastAPI application. Built from infrastructure/docker/Dockerfile.api.
+    # Mounts source code for hot-reload in development.
+    # Depends on postgres + redpanda to be healthy first.
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.api
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - postgres
+      - redpanda
+    volumes:
+      - .:/app
+
+  agents:
+    # What goes here:
+    # Agent worker process. Runs the Kafka consumer loop that triggers
+    # all agent pipelines on incoming events.
+    # Built from infrastructure/docker/Dockerfile.agents.
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.agents
+    env_file: .env
+    depends_on:
+      - postgres
+      - redpanda
+      - neo4j
+      - redis
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
+  neo4j_data:
+  localstack_data:

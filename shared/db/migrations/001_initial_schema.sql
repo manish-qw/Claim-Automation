@@ -1,0 +1,48 @@
+-- shared/db/migrations/001_initial_schema.sql
+-- ─────────────────────────────────────────────────────────────────────────
+-- PURPOSE:
+--     Initial PostgreSQL schema for CLAIMOS AI.
+--     Run once at environment setup. All subsequent schema changes
+--     go in numbered migration files (002_..., 003_..., etc.)
+--
+-- TABLES TO CREATE HERE:
+--
+--   claims
+--     Primary table. Stores the full ClaimContextObject as a JSONB column
+--     alongside key indexed columns for fast querying:
+--     claim_id (UUID PK), policy_id, claimant_id, current_stage,
+--     cause_of_death_type, contestability_status, sla_deadline,
+--     final_decision, net_payout_amount, version (for optimistic locking),
+--     created_at, updated_at, context (JSONB — full ClaimContextObject)
+--
+--   agent_outputs
+--     One row per agent per claim. Stores AgentOutput envelopes.
+--     Columns: output_id (UUID PK), claim_id (FK), agent_id, status,
+--     confidence, completeness, output (JSONB), produced_at, model_used,
+--     prompt_version, duration_ms
+--
+--   flags
+--     All FlagObjects raised across all claims.
+--     Columns: flag_id (UUID PK), claim_id (FK), agent_id, flag_type,
+--     severity, evidence_doc, evidence_field, explanation, raised_at
+--
+--   audit_events
+--     Local mirror of audit events (primary store is AWS QLDB).
+--     Columns: audit_id (UUID PK), claim_id (FK), agent_id, action_type,
+--     input_hash, output_hash, previous_entry_hash, model_version,
+--     prompt_version, confidence, reasoning_trace (TEXT), timestamp,
+--     duration_ms
+--
+--   fraud_rules
+--     Configurable fraud rules loaded by fraud_rules_engine.py.
+--     Allows changing rule thresholds and severities without code deployment.
+--     Columns: rule_id (UUID PK), rule_name, severity, threshold_value,
+--     is_active (bool), updated_at, updated_by
+--
+-- INDEXES TO CREATE:
+--     claims.current_stage          — for queue queries
+--     claims.sla_deadline           — for SLA ordering
+--     claims.policy_id              — for dedup checks
+--     flags.claim_id + severity     — for CRITICAL flag lookups
+--     audit_events.claim_id         — for audit trail queries
+-- ─────────────────────────────────────────────────────────────────────────
