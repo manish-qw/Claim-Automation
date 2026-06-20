@@ -11,6 +11,7 @@ build/
 .eggs/
 .venv/
 venv/
+local_venv/
 env/
 .env
 *.env
@@ -54,3 +55,15 @@ htmlcov/
 .terraform/
 *.tfstate
 *.tfstate.backup
+
+# Custom project structure docs
+PROJECT_STRUCTURE.md
+
+test_paddle_parallel.py
+
+ocr_test
+D:\Claim Automation ICICI\ocr_test
+
+.pytest_cache
+D:\Claim Automation ICICI\.pytest_cache
+

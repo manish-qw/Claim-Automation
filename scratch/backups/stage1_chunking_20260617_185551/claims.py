@@ -17,15 +17,8 @@ import cv2
 import json
 import uuid
 import re
-import httpx
 from openai import OpenAI
-from api.face_verification import (
-    run_stage1_face_verification,
-    should_run_stage1_face_verification,
-)
 from api.validation_rules import validate_document
-
-FACE_ONLY_DOC_TYPES = {"CLAIMANT_RECENT_PHOTOGRAPH"}
 
 DOC_TYPE_MAPPING = {
     "CLAIMANT_STATEMENT_FORM": "ClaimantStatementForm",
@@ -216,33 +209,6 @@ CONF_TEXT:
 Return only the completed JSON. Start your response with {{ and end with }}.
 """
 
-CHUNK_PROMPT_TEMPLATE = """Extract structured data from this {DOCUMENT_TYPE} OCR chunk.
-Return ONLY valid JSON matching the schema. No markdown or explanation.
-
-Rules:
-- Use only CURRENT_CHUNK_TEXT for extraction. PREVIOUS_CONTEXT is only to resolve split labels.
-- If a schema field is absent in CURRENT_CHUNK_TEXT, return null for that field.
-- Do not infer missing values from outside this chunk.
-- For scalar fields, return {{"value": string|null, "ocr_confidence": number|null, "extraction_confidence": number, "source_text": string|null}}.
-- Use CONF_TEXT to estimate ocr_confidence.
-- Keep arrays in page order and include only values present in this chunk.
-
-Schema:
-{SCHEMA}
-
-Chunk: {CHUNK_INDEX}/{CHUNK_TOTAL}
-Pages: {PAGE_RANGE}
-
-PREVIOUS_CONTEXT:
-{PREVIOUS_CONTEXT}
-
-CURRENT_CHUNK_TEXT:
-{CLEAN_TEXT}
-
-CONF_TEXT:
-{CONF_TEXT}
-"""
-
 try:
     import fitz
     HAS_PYMUPDF = True
@@ -349,85 +315,6 @@ def clean_json_response(content: str) -> str:
             lines = lines[:-1]
         content = "\n".join(lines).strip()
     return content
-
-def estimate_llm_tokens(text: str) -> int:
-    # Cheap approximation; good enough for routing without adding tokenizer latency.
-    return max(1, (len(text or "") + 3) // 4)
-
-def normalize_compare_value(value: Any) -> str:
-    if value is None:
-        return ""
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    if isinstance(value, (int, float)):
-        return str(value).strip().lower()
-    return re.sub(r"[^a-z0-9]+", "", str(value).strip().lower())
-
-def is_extraction_field_object(value: Any) -> bool:
-    return isinstance(value, dict) and "value" in value and (
-        "ocr_confidence" in value or "extraction_confidence" in value or "source_text" in value
-    )
-
-def field_has_value(field: Any) -> bool:
-    if is_extraction_field_object(field):
-        value = field.get("value")
-    else:
-        value = field
-    if value is None:
-        return False
-    if isinstance(value, str):
-        return bool(value.strip())
-    if isinstance(value, (list, dict)):
-        return bool(value)
-    return True
-
-def extraction_confidence_of(field: Any) -> float:
-    if not isinstance(field, dict):
-        return 0.0
-    try:
-        return float(field.get("extraction_confidence") or 0.0)
-    except Exception:
-        return 0.0
-
-def stable_json_key(value: Any) -> str:
-    try:
-        return json.dumps(value, sort_keys=True, separators=(",", ":"), default=str)
-    except Exception:
-        return str(value)
-
-def normalize_ground_text(text: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "", (text or "").lower())
-
-def is_value_grounded(value: Any, raw_text: str) -> bool:
-    if value is None:
-        return True
-    value_text = str(value).strip()
-    if not value_text:
-        return True
-    normalized_value = normalize_ground_text(value_text)
-    if len(normalized_value) < 3:
-        return True
-    return normalized_value in normalize_ground_text(raw_text)
-
-def should_ground_value(field_path: str, value: Any) -> bool:
-    if value is None:
-        return False
-    value_text = str(value).strip()
-    if len(normalize_ground_text(value_text)) < 4:
-        return False
-    path = field_path.lower()
-    critical_markers = [
-        "aadhaar", "account", "amount", "application", "certificate", "date",
-        "ifsc", "micr", "number", "pan", "pincode", "policy", "registration",
-        "uid", "vid",
-    ]
-    return bool(re.search(r"\d", value_text)) or any(marker in path for marker in critical_markers)
-
-def tail_lines(text: str, count: int) -> str:
-    if count <= 0:
-        return ""
-    lines = [line.strip() for line in (text or "").splitlines() if line.strip()]
-    return "\n".join(lines[-count:])
 
 def fast_classify_identity_document(ocr_text: str) -> Optional[Dict[str, Any]]:
     text = f" {ocr_text or ''} "
@@ -566,7 +453,6 @@ PIPELINE_LOCK = threading.Lock()
 OCR_QUEUE: "queue.Queue[Dict[str, Any]]" = queue.Queue()
 LLM_QUEUE: "queue.Queue[Dict[str, Any]]" = queue.Queue()
 VALIDATION_QUEUE: "queue.Queue[Dict[str, Any]]" = queue.Queue()
-FACE_QUEUE: "queue.Queue[Dict[str, Any]]" = queue.Queue()
 PIPELINE_WORKERS_STARTED = False
 PIPELINE_WORKERS_LOCK = threading.Lock()
 PIPELINE_TERMINAL_STATUSES = {"success", "failed", "validation_error"}
@@ -816,182 +702,6 @@ def run_ocr_with_fallback(image: Image.Image, primary_engine: str = "rapidocr") 
                 )
         raise
 
-def get_nanonets_ocr_key() -> Optional[str]:
-    for key_name in ("NANO_OCR_APIKEY", "NANONETS_API_KEY", "NANONETS_OCR_API_KEY"):
-        value = os.getenv(key_name)
-        if value and value.strip():
-            return value.strip().strip('"').strip("'")
-    return None
-
-def extract_nanonets_markdown(response_json: Dict[str, Any]) -> Tuple[str, Dict[str, Any], Optional[float]]:
-    result = response_json.get("result") or {}
-    markdown = result.get("markdown") if isinstance(result, dict) else None
-    metadata: Dict[str, Any] = {}
-    content = ""
-    if isinstance(markdown, dict):
-        content = str(markdown.get("content") or "")
-        metadata = markdown.get("metadata") or {}
-    elif isinstance(markdown, str):
-        content = markdown
-
-    if not content and isinstance(result, dict):
-        json_result = result.get("json")
-        if isinstance(json_result, dict):
-            metadata = json_result.get("metadata") or metadata
-            json_content = json_result.get("content")
-            if isinstance(json_content, str):
-                content = json_content
-            elif json_content is not None:
-                content = json.dumps(json_content, ensure_ascii=False)
-
-    confidence = None
-    for candidate in (
-        metadata.get("confidence_score") if isinstance(metadata, dict) else None,
-        response_json.get("confidence_score"),
-    ):
-        if candidate is None:
-            continue
-        if isinstance(candidate, (int, float)):
-            confidence = float(candidate)
-            break
-        if isinstance(candidate, dict):
-            values = []
-            for value in candidate.values():
-                try:
-                    values.append(float(value))
-                except Exception:
-                    pass
-            if values:
-                confidence = sum(values) / len(values)
-                break
-    return content.strip(), metadata, confidence
-
-def build_ocr_page_from_text(
-    raw_text: str,
-    confidence: Optional[float],
-    processing_ms: int,
-    page_number: int = 1,
-    metadata: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
-    confidence_value = round(float(confidence if confidence is not None else 95.0), 2)
-    confidence_value = max(0.0, min(confidence_value, 100.0))
-    tokens = re.findall(r"\S+", raw_text or "")
-    words = []
-    total_conf = 0.0
-    text_conf = 0.0
-    num_conf = 0.0
-    text_count = 0
-    num_count = 0
-    for token in tokens:
-        cleaned = token.strip(".,;:?!()[]{}*\"'")
-        if not cleaned:
-            continue
-        is_num = is_numeric_word(cleaned)
-        words.append({
-            "text": token,
-            "confidence": confidence_value,
-            "is_numeric": is_num,
-        })
-        total_conf += confidence_value
-        if is_num:
-            num_conf += confidence_value
-            num_count += 1
-        else:
-            text_conf += confidence_value
-            text_count += 1
-    total_count = len(words)
-    return {
-        "raw_text": raw_text or "",
-        "words": words,
-        "qr_codes": [],
-        "page_number": page_number,
-        "ocr_engine_used": "nanonets",
-        "nanonets_metadata": metadata or {},
-        "metrics": {
-            "overall_confidence": round(total_conf / total_count, 2) if total_count > 0 else 0.0,
-            "text_confidence": round(text_conf / text_count, 2) if text_count > 0 else 0.0,
-            "number_confidence": round(num_conf / num_count, 2) if num_count > 0 else 0.0,
-            "word_count": total_count,
-            "text_count": text_count,
-            "number_count": num_count,
-            "processing_time_ms": processing_ms,
-        },
-    }
-
-def process_nanonets_claim_form_ocr(
-    file_bytes: bytes,
-    filename: str,
-    request_id: str,
-) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
-    api_key = get_nanonets_ocr_key()
-    if not api_key:
-        raise RuntimeError("Nanonets API key is not configured. Set NANO_OCR_APIKEY.")
-
-    endpoint = os.getenv(
-        "NANONETS_OCR_ENDPOINT",
-        "https://extraction-api.nanonets.com/api/v1/extract/sync",
-    ).strip()
-    output_format = os.getenv("NANONETS_OCR_OUTPUT_FORMAT", "markdown").strip() or "markdown"
-    timeout_s = max(5.0, parse_float_env("NANONETS_OCR_TIMEOUT_S", 90.0))
-    include_metadata = os.getenv("NANONETS_OCR_INCLUDE_METADATA", "confidence_score").strip()
-    custom_instructions = os.getenv(
-        "NANONETS_CLAIM_FORM_CUSTOM_INSTRUCTIONS",
-        "Extract all visible text from this insurance claim form. Preserve labels, checkbox selections, tables, "
-        "section headings, handwritten text where readable, dates, names, policy numbers, phone numbers, bank "
-        "details, signatures text, and declarations. Do not summarize.",
-    ).strip()
-    mime_type = "application/pdf" if filename.lower().endswith(".pdf") or file_bytes.startswith(b"%PDF") else "application/octet-stream"
-    data = {
-        "output_format": output_format,
-    }
-    if include_metadata:
-        data["include_metadata"] = include_metadata
-    if custom_instructions:
-        data["custom_instructions"] = custom_instructions
-        data["prompt_mode"] = os.getenv("NANONETS_OCR_PROMPT_MODE", "append").strip() or "append"
-
-    started_at = time.time()
-    print(f"[NANONETS OCR START] req={request_id} doc=CLAIMANT_STATEMENT_FORM file={filename}")
-    with httpx.Client(timeout=timeout_s) as client:
-        response = client.post(
-            endpoint,
-            headers={"Authorization": f"Bearer {api_key}"},
-            data=data,
-            files={"file": (filename, file_bytes, mime_type)},
-        )
-    processing_ms = int((time.time() - started_at) * 1000)
-    try:
-        response_json = response.json()
-    except Exception as exc:
-        raise RuntimeError(f"Nanonets returned non-JSON response status={response.status_code}") from exc
-    if response.status_code >= 400 or response_json.get("success") is False:
-        message = response_json.get("message") or response_json.get("error") or response.text[:300]
-        raise RuntimeError(f"Nanonets OCR failed status={response.status_code}: {message}")
-
-    markdown_text, metadata, confidence = extract_nanonets_markdown(response_json)
-    if not markdown_text:
-        raise RuntimeError("Nanonets OCR returned empty content.")
-
-    page = build_ocr_page_from_text(
-        raw_text=markdown_text,
-        confidence=confidence,
-        processing_ms=processing_ms,
-        metadata=metadata,
-    )
-    page["nanonets_record_id"] = response_json.get("record_id")
-    page["nanonets_processing_time"] = response_json.get("processing_time")
-    print(
-        f"[NANONETS OCR DONE] req={request_id} record_id={response_json.get('record_id')} "
-        f"words={page.get('metrics', {}).get('word_count', 0)} ms={processing_ms}"
-    )
-    return [page], {
-        "nanonets_record_id": response_json.get("record_id"),
-        "nanonets_status": response_json.get("status"),
-        "nanonets_processing_time": response_json.get("processing_time"),
-        "nanonets_output_format": output_format,
-        "nanonets_endpoint": endpoint,
-    }
-
 def process_document_ocr_only(
     file_bytes: bytes,
     filename: str,
@@ -1001,37 +711,12 @@ def process_document_ocr_only(
     request_id = request_id or uuid.uuid4().hex[:8]
     request_started_at = time.time()
     pages_result = []
-    ocr_provider_metadata: Dict[str, Any] = {}
-    auto_engine = "rapidocr"
     pdf_parallel_threshold_pages = max(1, parse_int_env("PDF_PARALLEL_THRESHOLD_PAGES", 1))
     default_pdf_workers = min(4, os.cpu_count() or 2)
     pdf_parallel_workers = min(max(1, parse_int_env("PDF_PARALLEL_PAGE_WORKERS", default_pdf_workers)), 8)
 
     try:
-        if doc_type == "CLAIMANT_STATEMENT_FORM" and parse_bool_env("NANONETS_CLAIM_FORM_OCR_ENABLED", True):
-            try:
-                pages_result, ocr_provider_metadata = process_nanonets_claim_form_ocr(
-                    file_bytes=file_bytes,
-                    filename=filename,
-                    request_id=request_id,
-                )
-            except Exception as nanonets_exc:
-                fallback_enabled = parse_bool_env("NANONETS_CLAIM_FORM_FALLBACK_LOCAL", True)
-                print(
-                    f"[NANONETS OCR ERROR] req={request_id} fallback_local={fallback_enabled} "
-                    f"error={nanonets_exc}"
-                )
-                if not fallback_enabled:
-                    raise HTTPException(
-                        status_code=502,
-                        detail=f"Nanonets claim form OCR failed: {nanonets_exc}",
-                    )
-                ocr_provider_metadata = {
-                    "nanonets_error": str(nanonets_exc),
-                    "nanonets_fallback_local": True,
-                }
-
-        if not pages_result and (filename.lower().endswith(".pdf") or file_bytes.startswith(b"%PDF")):
+        if filename.lower().endswith(".pdf") or file_bytes.startswith(b"%PDF"):
             if not HAS_PYMUPDF:
                 raise HTTPException(
                     status_code=500,
@@ -1117,7 +802,7 @@ def process_document_ocr_only(
             else:
                 for idx in range(num_pages):
                     pages_result.append(process_page(idx))
-        elif not pages_result:
+        else:
             img = Image.open(io.BytesIO(file_bytes)).convert("RGB")
             auto_engine = "rapidocr"
             detected_qrs = detect_qr_codes(img)
@@ -1173,7 +858,6 @@ def process_document_ocr_only(
         "filename": filename,
         "doc_type": doc_type,
         "engine_used": engine_used,
-        "ocr_provider_metadata": ocr_provider_metadata,
         "llm_provider": None,
         "llm_model": None,
         "llm_fallback_used": False,
@@ -1185,7 +869,6 @@ def process_document_ocr_only(
             "rapid_ocr_max_concurrency": RAPID_OCR_MAX_CONCURRENCY,
             "pdf_parallel_workers": pdf_parallel_workers,
             "pdf_parallel_threshold_pages": pdf_parallel_threshold_pages,
-            **ocr_provider_metadata,
             "total_request_ms": int((time.time() - request_started_at) * 1000),
         },
         "qr_codes": all_qr_codes,
@@ -1227,14 +910,6 @@ def run_json_extraction_from_pages(
     llm_input_truncated = False
     clean_text_chars = 0
     conf_text_chars = 0
-    total_token_estimate = 0
-    chunked_extraction_used = False
-    chunk_count = 0
-    chunk_token_estimates: List[int] = []
-    chunk_extraction_metrics: List[Dict[str, Any]] = []
-    chunk_merge_conflicts: List[Dict[str, Any]] = []
-    grounding_issues: List[Dict[str, Any]] = []
-    fallback_state_lock = threading.Lock()
 
     def call_llm_with_retry(
         client: OpenAI,
@@ -1275,47 +950,24 @@ def run_json_extraction_from_pages(
                     raise
                 time.sleep((llm_retry_backoff_ms * attempt) / 1000.0)
 
-    def build_page_text_inputs() -> List[Dict[str, Any]]:
-        page_inputs = []
-        for idx, page in enumerate(pages_result):
-            clean_texts = []
-            conf_texts = []
-            for w in page.get("words", []):
-                if "text" not in w:
-                    continue
-                t = str(w["text"]).strip()
-                if not t:
-                    continue
-                try:
-                    c = int(round(float(w.get("confidence", 0))))
-                except Exception:
-                    c = 0
-                clean_texts.append(t)
-                conf_texts.append(f"{t}|{c}")
-            clean = " ".join(clean_texts)
-            conf = " ".join(conf_texts)
-            raw = str(page.get("raw_text") or clean)
-            page_number = int(page.get("page_number") or idx + 1)
-            page_inputs.append({
-                "page_number": page_number,
-                "clean_text": clean,
-                "conf_text": conf,
-                "raw_text": raw,
-                "token_estimate": estimate_llm_tokens(clean) + estimate_llm_tokens(conf),
-            })
-        return page_inputs
-
-    def build_text_inputs(page_inputs: List[Dict[str, Any]]) -> Tuple[str, str, bool]:
+    def build_text_inputs() -> Tuple[str, str, bool]:
         clean_texts = []
         conf_texts = []
         clean_chars_used = 0
         conf_chars_used = 0
         input_limit_hit = False
-        for page in page_inputs:
-            page_clean_tokens = page.get("clean_text", "").split()
-            page_conf_tokens = page.get("conf_text", "").split()
-            for token_idx, t in enumerate(page_clean_tokens):
-                conf_token = page_conf_tokens[token_idx] if token_idx < len(page_conf_tokens) else f"{t}|0"
+        for page in pages_result:
+            for w in page.get("words", []):
+                if "text" not in w:
+                    continue
+                t = str(w["text"]).strip()
+                try:
+                    c = int(round(float(w.get("confidence", 0))))
+                except Exception:
+                    c = 0
+                if not t:
+                    continue
+                conf_token = f"{t}|{c}"
                 next_clean = clean_chars_used + (1 if clean_texts else 0) + len(t)
                 next_conf = conf_chars_used + (1 if conf_texts else 0) + len(conf_token)
                 if next_clean > llm_input_char_limit or next_conf > llm_input_char_limit:
@@ -1352,182 +1004,6 @@ def run_json_extraction_from_pages(
         if "UnmappedFields" not in payload:
             payload["UnmappedFields"] = []
         return payload
-
-    def clone_json(value: Any) -> Any:
-        try:
-            return json.loads(json.dumps(value))
-        except Exception:
-            return value
-
-    def build_page_chunks(
-        page_inputs: List[Dict[str, Any]],
-        schema_token_estimate: int,
-    ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
-        chunk_threshold = max(1000, parse_int_env("LLM_CHUNK_TOKEN_THRESHOLD", 3500))
-        max_chunks = max(1, parse_int_env("LLM_MAX_CHUNKS_PER_DOC", 10))
-        overlap_lines = max(0, min(parse_int_env("LLM_CHUNK_OVERLAP_LINES", 3), 8))
-        prompt_overhead_tokens = 300
-        page_budget = max(600, chunk_threshold - schema_token_estimate - prompt_overhead_tokens)
-        chunks = []
-        current_pages = []
-        current_tokens = 0
-
-        def emit_chunk(pages: List[Dict[str, Any]]) -> None:
-            if not pages:
-                return
-            clean = "\n".join(page.get("clean_text", "") for page in pages if page.get("clean_text"))
-            conf = "\n".join(page.get("conf_text", "") for page in pages if page.get("conf_text"))
-            raw = "\n".join(page.get("raw_text", "") for page in pages if page.get("raw_text"))
-            start_page = pages[0].get("page_number")
-            end_page = pages[-1].get("page_number")
-            chunks.append({
-                "index": len(chunks) + 1,
-                "page_start": start_page,
-                "page_end": end_page,
-                "page_range": f"{start_page}" if start_page == end_page else f"{start_page}-{end_page}",
-                "clean_text": clean,
-                "conf_text": conf,
-                "raw_text": raw,
-                "token_estimate": (
-                    estimate_llm_tokens(clean)
-                    + estimate_llm_tokens(conf)
-                    + schema_token_estimate
-                    + prompt_overhead_tokens
-                ),
-                "previous_context": "",
-            })
-
-        for page in page_inputs:
-            page_tokens = max(1, int(page.get("token_estimate") or 1))
-            if current_pages and current_tokens + page_tokens > page_budget:
-                emit_chunk(current_pages)
-                current_pages = []
-                current_tokens = 0
-            current_pages.append(page)
-            current_tokens += page_tokens
-        emit_chunk(current_pages)
-
-        for idx, chunk in enumerate(chunks):
-            chunk["total"] = len(chunks)
-            if idx > 0:
-                chunk["previous_context"] = tail_lines(chunks[idx - 1].get("raw_text", ""), overlap_lines)
-
-        if len(chunks) > max_chunks:
-            return chunks, f"too_many_chunks:{len(chunks)}>{max_chunks}"
-        return chunks, None
-
-    def merge_chunk_payloads(
-        payloads: List[Dict[str, Any]],
-        chunks: List[Dict[str, Any]],
-        schema: Dict[str, Any],
-        full_raw_text: str,
-    ) -> Dict[str, Any]:
-        merged: Dict[str, Any] = {}
-
-        def merge_node(path: str, current: Any, incoming: Any, chunk: Dict[str, Any]) -> Any:
-            if is_extraction_field_object(incoming):
-                if not field_has_value(incoming):
-                    return current if current is not None else clone_json(incoming)
-                incoming_value = incoming.get("value")
-                if not field_has_value(current):
-                    return clone_json(incoming)
-                current_value = current.get("value") if is_extraction_field_object(current) else current
-                if normalize_compare_value(current_value) == normalize_compare_value(incoming_value):
-                    if extraction_confidence_of(incoming) > extraction_confidence_of(current):
-                        return clone_json(incoming)
-                    return current
-
-                current_grounded = is_value_grounded(current_value, full_raw_text)
-                incoming_grounded = is_value_grounded(incoming_value, chunk.get("raw_text", ""))
-                choose_incoming = incoming_grounded and not current_grounded
-                chunk_merge_conflicts.append({
-                    "field": path,
-                    "kept": incoming_value if choose_incoming else current_value,
-                    "rejected": current_value if choose_incoming else incoming_value,
-                    "incoming_page_range": chunk.get("page_range"),
-                    "reason": "conflicting_values",
-                })
-                return clone_json(incoming) if choose_incoming else current
-
-            if isinstance(incoming, dict):
-                base = current if isinstance(current, dict) and not is_extraction_field_object(current) else {}
-                result = clone_json(base) if isinstance(base, dict) else {}
-                for key, value in incoming.items():
-                    child_path = f"{path}.{key}" if path else str(key)
-                    result[key] = merge_node(child_path, result.get(key), value, chunk)
-                return result
-
-            if isinstance(incoming, list):
-                result = clone_json(current) if isinstance(current, list) else []
-                seen = {stable_json_key(item) for item in result}
-                for item in incoming:
-                    if not field_has_value(item):
-                        continue
-                    key = stable_json_key(item)
-                    if key not in seen:
-                        result.append(clone_json(item))
-                        seen.add(key)
-                return result
-
-            if not field_has_value(incoming):
-                return current
-            if not field_has_value(current):
-                return clone_json(incoming)
-            if isinstance(current, bool) and isinstance(incoming, bool):
-                return current or incoming
-            if normalize_compare_value(current) == normalize_compare_value(incoming):
-                return current
-            chunk_merge_conflicts.append({
-                "field": path,
-                "kept": current,
-                "rejected": incoming,
-                "incoming_page_range": chunk.get("page_range"),
-                "reason": "conflicting_values",
-            })
-            return current
-
-        for idx, payload in enumerate(payloads):
-            chunk = chunks[idx] if idx < len(chunks) else {}
-            merged = merge_node("", merged, payload, chunk)
-
-        if chunk_merge_conflicts:
-            merged["NeedsReview"] = True
-            merged["Conflicts"] = chunk_merge_conflicts
-        return normalize_extracted_payload(merged, schema)
-
-    def apply_grounding_checks(payload: Dict[str, Any], full_raw_text: str) -> None:
-        if not parse_bool_env("LLM_GROUNDING_CHECK_ENABLED", True):
-            return
-
-        def walk(node: Any, path: str) -> None:
-            if is_extraction_field_object(node):
-                value = node.get("value")
-                if field_has_value(node) and should_ground_value(path, value) and not is_value_grounded(value, full_raw_text):
-                    grounding_issues.append({
-                        "field": path,
-                        "value": value,
-                        "reason": "value_not_found_in_ocr_text",
-                    })
-                return
-            if isinstance(node, dict):
-                for key, value in node.items():
-                    if key in {"Conflicts", "GroundingIssues"}:
-                        continue
-                    child_path = f"{path}.{key}" if path else str(key)
-                    walk(value, child_path)
-            elif isinstance(node, list):
-                for idx, item in enumerate(node):
-                    walk(item, f"{path}[{idx}]")
-
-        walk(payload, "")
-        if grounding_issues:
-            payload["NeedsReview"] = True
-            payload["GroundingIssues"] = grounding_issues
-            low_conf = payload.setdefault("LowConfidenceFields", [])
-            for issue in grounding_issues:
-                field = issue.get("field")
-                if field and field not in low_conf:
-                    low_conf.append(field)
 
     try:
         resolved_doc_type = doc_type
@@ -1574,8 +1050,7 @@ def run_json_extraction_from_pages(
             f"model={llm_model} schema_key={schema_key or 'none'}"
         )
 
-        page_inputs = build_page_text_inputs()
-        clean_text, conf_text, llm_input_truncated = build_text_inputs(page_inputs)
+        clean_text, conf_text, llm_input_truncated = build_text_inputs()
         clean_text_chars = len(clean_text)
         conf_text_chars = len(conf_text)
         if llm_input_truncated:
@@ -1668,65 +1143,29 @@ def run_json_extraction_from_pages(
                 },
             }
 
-        schema_compact = json.dumps(schema, separators=(",", ":"))
-        schema_token_estimate = estimate_llm_tokens(schema_compact)
-        full_clean_text = "\n".join(page.get("clean_text", "") for page in page_inputs if page.get("clean_text"))
-        full_conf_text = "\n".join(page.get("conf_text", "") for page in page_inputs if page.get("conf_text"))
-        full_raw_text = "\n".join(page.get("raw_text", "") for page in page_inputs if page.get("raw_text"))
-        total_token_estimate = (
-            estimate_llm_tokens(full_clean_text)
-            + estimate_llm_tokens(full_conf_text)
-            + schema_token_estimate
-        )
-        chunk_threshold = max(1000, parse_int_env("LLM_CHUNK_TOKEN_THRESHOLD", 3500))
-        timeout_base_s = max(5.0, parse_float_env("LLM_TIMEOUT_BASE_SECONDS", llm_request_timeout_s))
-        timeout_per_1k_tokens = max(0.0, parse_float_env("LLM_TIMEOUT_PER_1K_TOKENS", 4.0))
-        adaptive_timeout_s = min(
-            120.0,
-            max(llm_request_timeout_s, timeout_base_s + (min(total_token_estimate, chunk_threshold) / 1000.0) * timeout_per_1k_tokens),
-        )
-        if adaptive_timeout_s > llm_request_timeout_s + 0.1:
-            llm_request_timeout_s = adaptive_timeout_s
-            if is_huggingface:
-                client = OpenAI(
-                    base_url="https://router.huggingface.co/v1",
-                    api_key=api_key,
-                    timeout=llm_request_timeout_s,
-                    max_retries=0,
-                )
-            else:
-                client = OpenAI(api_key=api_key, timeout=llm_request_timeout_s, max_retries=0)
-            print(
-                f"[LLM TIMEOUT] req={request_id} adaptive_timeout_s={llm_request_timeout_s:.1f} "
-                f"estimated_tokens={total_token_estimate}"
-            )
-
         prompt = PROMPT_TEMPLATE.format(
             DOCUMENT_TYPE=schema_key,
-            SCHEMA=schema_compact,
+            SCHEMA=json.dumps(schema, separators=(",", ":")),
             CLEAN_TEXT=clean_text,
             CONF_TEXT=conf_text,
         )
+        primary_kwargs = {
+            "model": llm_model,
+            "messages": [
+                {"role": "system", "content": "You are a precise JSON data extraction engine."},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.0,
+        }
+        if supports_response_format:
+            primary_kwargs["response_format"] = {"type": "json_object"}
 
         fallback_model = os.getenv("FALLBACK_OPENAI_MODEL", "gpt-4o")
         fallback_enabled = parse_bool_env("CLOUD_FALLBACK_TO_OPENAI", True) and (
             llm_provider == "huggingface" or (llm_provider == "openai" and fallback_model != llm_model)
         )
 
-        def build_completion_kwargs(prompt_text: str, model_name: str, response_format_enabled: bool) -> Dict[str, Any]:
-            kwargs = {
-                "model": model_name,
-                "messages": [
-                    {"role": "system", "content": "You are a precise JSON data extraction engine."},
-                    {"role": "user", "content": prompt_text},
-                ],
-                "temperature": 0.0,
-            }
-            if response_format_enabled:
-                kwargs["response_format"] = {"type": "json_object"}
-            return kwargs
-
-        def parse_payload(raw_text: Optional[str], provider_name: str, run_validation: bool = True):
+        def parse_payload(raw_text: Optional[str], provider_name: str):
             if raw_text is None:
                 return None, None, "empty_response"
             try:
@@ -1735,7 +1174,7 @@ def run_json_extraction_from_pages(
                 if not isinstance(payload, dict):
                     return None, None, "invalid_json"
                 payload = normalize_extracted_payload(payload, schema)
-                if validate_output and run_validation:
+                if validate_output:
                     validation_result = validate_document(doc_type, payload)
                     if validation_result.get("status") != "OK":
                         return None, validation_result, "validation_failed"
@@ -1745,258 +1184,103 @@ def run_json_extraction_from_pages(
             except Exception:
                 return None, None, "parse_error"
 
-        def try_openai_fallback(
-            reason: str,
-            fallback_prompt: Optional[str] = None,
-            run_validation: bool = True,
-            stage: str = "fallback_extraction",
-            mutate_state: bool = True,
-        ):
+        def try_openai_fallback(reason: str):
             nonlocal fallback_extraction_ms, llm_provider, llm_model, llm_fallback_used, llm_fallback_reason
             fallback_key = os.getenv("OPENAI_API_KEY")
             if not fallback_key:
-                if mutate_state:
-                    llm_fallback_reason = "cloud_fallback_no_api_key"
+                llm_fallback_reason = "cloud_fallback_no_api_key"
                 return None, None
             fallback_client = OpenAI(api_key=fallback_key, timeout=llm_request_timeout_s, max_retries=0)
-            fallback_kwargs = build_completion_kwargs(fallback_prompt or prompt, fallback_model, True)
+            fallback_kwargs = {
+                "model": fallback_model,
+                "messages": [
+                    {"role": "system", "content": "You are a precise JSON data extraction engine."},
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": 0.0,
+                "response_format": {"type": "json_object"},
+            }
             try:
                 fallback_start = time.time()
                 fallback_resp = call_llm_with_retry(
                     fallback_client,
                     fallback_kwargs,
-                    stage,
+                    "fallback_extraction",
                     provider_override="openai",
                 )
-                fallback_duration_ms = int((time.time() - fallback_start) * 1000)
-                with fallback_state_lock:
-                    fallback_extraction_ms = (fallback_extraction_ms or 0) + fallback_duration_ms
+                fallback_extraction_ms = int((time.time() - fallback_start) * 1000)
                 fallback_data, fallback_validation, parse_error = parse_payload(
                     fallback_resp.choices[0].message.content,
                     "openai",
-                    run_validation=run_validation,
                 )
                 if fallback_data is not None:
-                    if mutate_state:
-                        with fallback_state_lock:
-                            llm_provider = "openai"
-                            llm_model = fallback_model
-                            llm_fallback_used = True
-                            llm_fallback_reason = reason
+                    llm_provider = "openai"
+                    llm_model = fallback_model
+                    llm_fallback_used = True
+                    llm_fallback_reason = reason
                     print(f"[LLM FALLBACK] req={request_id} provider=openai model={fallback_model} reason={reason}")
                     return fallback_data, None
                 if fallback_validation is not None:
-                    if mutate_state:
-                        llm_fallback_reason = "cloud_fallback_validation_failed"
+                    llm_fallback_reason = "cloud_fallback_validation_failed"
                     return None, fallback_validation
-                if mutate_state:
-                    llm_fallback_reason = f"cloud_fallback_{parse_error or 'failed'}"
+                llm_fallback_reason = f"cloud_fallback_{parse_error or 'failed'}"
                 return None, None
             except Exception as fallback_exc:
                 print(f"[LLM FALLBACK ERROR] req={request_id} error={fallback_exc}")
-                if mutate_state:
-                    llm_fallback_reason = "cloud_fallback_error"
+                llm_fallback_reason = "cloud_fallback_error"
                 return None, None
 
-        def run_primary_prompt(prompt_text: str, stage: str) -> Tuple[str, int]:
-            kwargs = build_completion_kwargs(prompt_text, llm_model, supports_response_format)
-            started_at = time.time()
-            response = call_llm_with_retry(client, kwargs, stage)
-            duration_ms = int((time.time() - started_at) * 1000)
-            return response.choices[0].message.content, duration_ms
-
-        def build_chunk_prompt(chunk: Dict[str, Any]) -> str:
-            return CHUNK_PROMPT_TEMPLATE.format(
-                DOCUMENT_TYPE=schema_key,
-                SCHEMA=schema_compact,
-                CHUNK_INDEX=chunk.get("index"),
-                CHUNK_TOTAL=chunk.get("total"),
-                PAGE_RANGE=chunk.get("page_range"),
-                PREVIOUS_CONTEXT=chunk.get("previous_context") or "",
-                CLEAN_TEXT=chunk.get("clean_text") or "",
-                CONF_TEXT=chunk.get("conf_text") or "",
-            )
-
-        def extract_chunk(chunk: Dict[str, Any]) -> Dict[str, Any]:
-            chunk_prompt = build_chunk_prompt(chunk)
-            provider_name = "huggingface" if is_huggingface else "openai"
-            stage = f"chunk_{chunk.get('index')}_extraction"
-            fallback_attempted = False
-            try:
-                response_text, duration_ms = run_primary_prompt(chunk_prompt, stage)
-                payload, validation_result, parse_error = parse_payload(
-                    response_text,
-                    provider_name,
-                    run_validation=False,
-                )
-                if payload is not None:
-                    return {
-                        "index": chunk.get("index"),
-                        "payload": payload,
-                        "provider": provider_name,
-                        "model": llm_model,
-                        "duration_ms": duration_ms,
-                        "fallback": False,
-                    }
-                if fallback_enabled:
-                    fallback_data, fallback_validation = try_openai_fallback(
-                        f"chunk_{chunk.get('index')}_{parse_error or 'invalid'}",
-                        fallback_prompt=chunk_prompt,
-                        run_validation=False,
-                        stage=f"fallback_chunk_{chunk.get('index')}",
-                        mutate_state=False,
-                    )
-                    fallback_attempted = True
-                    if fallback_data is not None:
-                        return {
-                            "index": chunk.get("index"),
-                            "payload": fallback_data,
-                            "provider": "openai",
-                            "model": fallback_model,
-                            "duration_ms": fallback_extraction_ms,
-                            "fallback": True,
-                        }
-                    if fallback_validation is not None:
-                        raise ValueError(f"chunk validation failed: {fallback_validation}")
-                raise ValueError(f"chunk parse failed: {parse_error or 'unknown'}")
-            except Exception as primary_exc:
-                if fallback_enabled and not fallback_attempted:
-                    fallback_data, fallback_validation = try_openai_fallback(
-                        f"chunk_{chunk.get('index')}_primary_error",
-                        fallback_prompt=chunk_prompt,
-                        run_validation=False,
-                        stage=f"fallback_chunk_{chunk.get('index')}",
-                        mutate_state=False,
-                    )
-                    if fallback_data is not None:
-                        return {
-                            "index": chunk.get("index"),
-                            "payload": fallback_data,
-                            "provider": "openai",
-                            "model": fallback_model,
-                            "duration_ms": fallback_extraction_ms,
-                            "fallback": True,
-                        }
-                    if fallback_validation is not None:
-                        raise ValueError(f"chunk validation failed: {fallback_validation}") from primary_exc
-                raise
-
-        if total_token_estimate > chunk_threshold:
-            chunks, chunk_error = build_page_chunks(page_inputs, schema_token_estimate)
-            chunk_count = len(chunks)
-            chunk_token_estimates = [int(chunk.get("token_estimate") or 0) for chunk in chunks]
-            if chunk_error:
+        response_text = None
+        try:
+            extract_start = time.time()
+            response = call_llm_with_retry(client, primary_kwargs, "extraction")
+            extraction_ms = int((time.time() - extract_start) * 1000)
+            response_text = response.choices[0].message.content
+        except Exception:
+            extraction_ms = int((time.time() - extract_start) * 1000)
+            if fallback_enabled:
+                extracted_data, fallback_validation_result = try_openai_fallback("primary_extraction_error")
+                if extracted_data is None and fallback_validation_result:
+                    return {"success": False, **fallback_validation_result}
+            if extracted_data is None:
                 return {
                     "success": False,
                     "status": "PROCESSING_FAILED",
-                    "error_type": "LLM_INPUT_TOO_LARGE",
-                    "title": "Document Too Large",
-                    "message": f"The document needs {chunk_count} extraction chunks, above the configured limit.",
-                    "action": "Increase LLM_MAX_CHUNKS_PER_DOC or upload a shorter document.",
+                    "error_type": "LLM_TIMEOUT",
+                    "title": "Extraction Timed Out",
+                    "message": f"The {(llm_provider or 'primary').title()} model did not finish extraction in time.",
+                    "action": "Please retry. If this persists, use OpenAI fallback or reduce input size.",
                     "missing_fields": [],
                 }
 
-            chunked_extraction_used = True
-            max_doc_chunk_workers = max(1, min(parse_int_env("LLM_MAX_CONCURRENT_CHUNKS_PER_DOC", 2), 4, chunk_count))
-            print(
-                f"[LLM CHUNK ROUTE] req={request_id} doc={doc_type} chunks={chunk_count} "
-                f"estimated_tokens={total_token_estimate} threshold={chunk_threshold} "
-                f"workers={max_doc_chunk_workers}"
-            )
-            chunk_start = time.time()
-            chunk_results: Dict[int, Dict[str, Any]] = {}
-            with ThreadPoolExecutor(max_workers=max_doc_chunk_workers) as executor:
-                future_to_chunk = {executor.submit(extract_chunk, chunk): chunk for chunk in chunks}
-                for future in concurrent.futures.as_completed(future_to_chunk):
-                    chunk = future_to_chunk[future]
-                    result = future.result()
-                    result_idx = int(result.get("index") or chunk.get("index"))
-                    chunk_results[result_idx] = result
-                    chunk_extraction_metrics.append({
-                        "chunk_index": result_idx,
-                        "page_range": chunk.get("page_range"),
-                        "provider": result.get("provider"),
-                        "model": result.get("model"),
-                        "duration_ms": result.get("duration_ms"),
-                        "fallback": result.get("fallback"),
-                        "token_estimate": chunk.get("token_estimate"),
-                    })
-                    print(
-                        f"[LLM CHUNK DONE] req={request_id} doc={doc_type} chunk={result_idx}/{chunk_count} "
-                        f"provider={result.get('provider')} page_range={chunk.get('page_range')}"
-                    )
-
-            ordered_payloads = [chunk_results[idx]["payload"] for idx in sorted(chunk_results.keys())]
-            ordered_chunks = [chunks[idx - 1] for idx in sorted(chunk_results.keys())]
-            extracted_data = merge_chunk_payloads(ordered_payloads, ordered_chunks, schema, full_raw_text or full_clean_text)
-            apply_grounding_checks(extracted_data, full_raw_text or full_clean_text)
-            extraction_ms = int((time.time() - chunk_start) * 1000)
-            providers_used = sorted({metric.get("provider") for metric in chunk_extraction_metrics if metric.get("provider")})
-            models_used = sorted({metric.get("model") for metric in chunk_extraction_metrics if metric.get("model")})
-            if any(metric.get("fallback") for metric in chunk_extraction_metrics):
-                llm_fallback_used = True
-                llm_fallback_reason = llm_fallback_reason or "chunk_fallback"
-            if len(providers_used) > 1:
-                llm_provider = "mixed"
-                llm_model = "+".join(models_used)
-            elif providers_used:
-                llm_provider = providers_used[0]
-                llm_model = models_used[0] if models_used else llm_model
-            if validate_output:
-                validation_result = validate_document(doc_type, extracted_data)
-                if validation_result.get("status") != "OK":
-                    return {"success": False, **validation_result}
-        else:
-            response_text = None
-            try:
-                response_text, extraction_ms = run_primary_prompt(prompt, "extraction")
-            except Exception:
-                extraction_ms = int((time.time() - extraction_started_at) * 1000)
-                if fallback_enabled:
-                    extracted_data, fallback_validation_result = try_openai_fallback("primary_extraction_error")
-                    if extracted_data is None and fallback_validation_result:
-                        return {"success": False, **fallback_validation_result}
-                if extracted_data is None:
-                    return {
-                        "success": False,
-                        "status": "PROCESSING_FAILED",
-                        "error_type": "LLM_TIMEOUT",
-                        "title": "Extraction Timed Out",
-                        "message": f"The {(llm_provider or 'primary').title()} model did not finish extraction in time.",
-                        "action": "Please retry. If this persists, use OpenAI fallback or reduce input size.",
-                        "missing_fields": [],
-                    }
+        if extracted_data is None:
+            provider_name = "huggingface" if is_huggingface else "openai"
+            extracted_data, validation_result, parse_error = parse_payload(response_text, provider_name)
+            if validation_result is not None and fallback_enabled:
+                fallback_data, fallback_validation_result = try_openai_fallback("primary_validation_failed")
+                if fallback_data is not None:
+                    extracted_data = fallback_data
+                elif fallback_validation_result:
+                    return {"success": False, **fallback_validation_result}
+            elif parse_error and fallback_enabled:
+                fallback_data, fallback_validation_result = try_openai_fallback(f"primary_{parse_error}")
+                if fallback_data is not None:
+                    extracted_data = fallback_data
+                elif fallback_validation_result:
+                    return {"success": False, **fallback_validation_result}
 
             if extracted_data is None:
-                provider_name = "huggingface" if is_huggingface else "openai"
-                extracted_data, validation_result, parse_error = parse_payload(response_text, provider_name)
-                if validation_result is not None and fallback_enabled:
-                    fallback_data, fallback_validation_result = try_openai_fallback("primary_validation_failed")
-                    if fallback_data is not None:
-                        extracted_data = fallback_data
-                    elif fallback_validation_result:
-                        return {"success": False, **fallback_validation_result}
-                elif parse_error and fallback_enabled:
-                    fallback_data, fallback_validation_result = try_openai_fallback(f"primary_{parse_error}")
-                    if fallback_data is not None:
-                        extracted_data = fallback_data
-                    elif fallback_validation_result:
-                        return {"success": False, **fallback_validation_result}
-
-                if extracted_data is None:
-                    if validation_result is not None:
-                        return {"success": False, **validation_result}
-                    return {
-                        "success": False,
-                        "status": "PROCESSING_FAILED",
-                        "error_type": "INVALID_LLM_JSON",
-                        "title": "Extraction Format Error",
-                        "message": "The model returned invalid JSON for this document.",
-                        "action": "Please retry the upload. If this persists, switch to cloud extraction.",
-                        "missing_fields": [],
-                    }
-            if extracted_data is not None and not chunked_extraction_used:
-                apply_grounding_checks(extracted_data, full_raw_text or full_clean_text)
+                if validation_result is not None:
+                    return {"success": False, **validation_result}
+                return {
+                    "success": False,
+                    "status": "PROCESSING_FAILED",
+                    "error_type": "INVALID_LLM_JSON",
+                    "title": "Extraction Format Error",
+                    "message": "The model returned invalid JSON for this document.",
+                    "action": "Please retry the upload. If this persists, switch to cloud extraction.",
+                    "missing_fields": [],
+                }
 
         return {
             "success": True,
@@ -2013,13 +1297,6 @@ def run_json_extraction_from_pages(
                 "input_clean_chars": clean_text_chars,
                 "input_conf_chars": conf_text_chars,
                 "input_truncated": llm_input_truncated,
-                "estimated_input_tokens": total_token_estimate,
-                "chunked_extraction_used": chunked_extraction_used,
-                "chunk_count": chunk_count,
-                "chunk_token_estimates": chunk_token_estimates,
-                "chunk_extraction_metrics": chunk_extraction_metrics,
-                "chunk_merge_conflicts": chunk_merge_conflicts,
-                "grounding_issues": grounding_issues,
                 "request_timeout_s": llm_request_timeout_s,
                 "retry_count": llm_retry_count,
             },
@@ -2049,7 +1326,6 @@ def recompute_pipeline_batch_locked(batch: Dict[str, Any]) -> None:
         "ocr_queue": OCR_QUEUE.qsize(),
         "llm_queue": LLM_QUEUE.qsize(),
         "validation_queue": VALIDATION_QUEUE.qsize(),
-        "face_queue": FACE_QUEUE.qsize(),
     }
     batch["status"] = "completed" if total > 0 and terminal == total else "processing"
     batch["updated_at"] = time.time()
@@ -2066,17 +1342,6 @@ def update_pipeline_doc(batch_id: str, doc_id: str, **updates) -> None:
         doc["updated_at"] = time.time()
         recompute_pipeline_batch_locked(batch)
 
-def update_pipeline_face_verification(batch_id: str, **updates) -> None:
-    with PIPELINE_LOCK:
-        batch = PIPELINE_BATCHES.get(batch_id)
-        if not batch:
-            return
-        current = batch.get("face_verification") or {}
-        current.update(updates)
-        current["updated_at"] = time.time()
-        batch["face_verification"] = current
-        recompute_pipeline_batch_locked(batch)
-
 def get_pipeline_batch_public(batch_id: str) -> Optional[Dict[str, Any]]:
     with PIPELINE_LOCK:
         batch = PIPELINE_BATCHES.get(batch_id)
@@ -2091,21 +1356,7 @@ def get_pipeline_batch_public(batch_id: str) -> Optional[Dict[str, Any]]:
             "counts": batch["counts"],
             "workers": batch["workers"],
             "docs": list(batch["docs"].values()),
-            "face_verification": batch.get("face_verification"),
         }
-
-def build_face_only_document_result(doc_type: str, filename: str) -> Dict[str, Any]:
-    return {
-        "success": True,
-        "doc_type": doc_type,
-        "filename": filename,
-        "face_only": True,
-        "message": "Captured for face verification only. OCR and JSON extraction are not required.",
-        "pages": [],
-        "global_metrics": {},
-        "pipeline_metrics": {},
-        "extracted_data": None,
-    }
 
 def pipeline_ocr_worker(worker_id: int) -> None:
     while True:
@@ -2282,46 +1533,6 @@ def pipeline_validation_worker(worker_id: int) -> None:
         finally:
             VALIDATION_QUEUE.task_done()
 
-def pipeline_face_worker(worker_id: int) -> None:
-    while True:
-        job = FACE_QUEUE.get()
-        try:
-            batch_id = job["batch_id"]
-            request_id = job["request_id"]
-            documents = job["documents"]
-            update_pipeline_face_verification(
-                batch_id,
-                status="running",
-                decision="MANUAL_REVIEW",
-                started_at=time.time(),
-                worker_id=worker_id,
-            )
-            print(f"[FACE VERIFY START] worker={worker_id} req={request_id} docs={len(documents)}")
-            result = run_stage1_face_verification(documents)
-            update_pipeline_face_verification(
-                batch_id,
-                **result,
-                completed_at=time.time(),
-            )
-            print(
-                f"[FACE VERIFY DONE] worker={worker_id} req={request_id} "
-                f"status={result.get('status')} decision={result.get('decision')} "
-                f"confidence={result.get('overall_confidence')}"
-            )
-        except Exception as exc:
-            update_pipeline_face_verification(
-                job.get("batch_id"),
-                status="error",
-                decision="MANUAL_REVIEW",
-                review_required=True,
-                review_flags=["FACE_VERIFY_ERROR"],
-                error=str(exc),
-                completed_at=time.time(),
-            )
-            print(f"[FACE VERIFY ERROR] worker={worker_id} error={exc}")
-        finally:
-            FACE_QUEUE.task_done()
-
 def ensure_pipeline_workers_started() -> None:
     global PIPELINE_WORKERS_STARTED
     if PIPELINE_WORKERS_STARTED:
@@ -2332,20 +1543,16 @@ def ensure_pipeline_workers_started() -> None:
         ocr_workers = max(1, min(parse_int_env("OCR_WORKERS", 4), 8))
         llm_workers = max(1, min(parse_int_env("LLM_WORKERS", 4), 8))
         validation_workers = max(1, min(parse_int_env("VALIDATION_WORKERS", 2), 8))
-        face_workers = max(1, min(parse_int_env("FACE_VERIFY_WORKERS", 1), 4))
         for idx in range(ocr_workers):
             threading.Thread(target=pipeline_ocr_worker, args=(idx + 1,), daemon=True).start()
         for idx in range(llm_workers):
             threading.Thread(target=pipeline_llm_worker, args=(idx + 1,), daemon=True).start()
         for idx in range(validation_workers):
             threading.Thread(target=pipeline_validation_worker, args=(idx + 1,), daemon=True).start()
-        for idx in range(face_workers):
-            threading.Thread(target=pipeline_face_worker, args=(idx + 1,), daemon=True).start()
         PIPELINE_WORKERS_STARTED = True
         print(
             f"[PIPELINE WORKERS] ocr={ocr_workers} llm={llm_workers} "
-            f"validation={validation_workers} face={face_workers} "
-            f"llm_max_concurrency={LLM_MAX_CONCURRENCY}"
+            f"validation={validation_workers} llm_max_concurrency={LLM_MAX_CONCURRENCY}"
         )
 
 @router.post("/ocr")
@@ -2402,34 +1609,6 @@ def run_claims_ocr(
                     status_code=400,
                     detail=f"Unsupported MIME type '{file.content_type}' for extension '{file_extension}'.",
                 )
-
-    if doc_type == "CLAIMANT_STATEMENT_FORM" and parse_bool_env("NANONETS_CLAIM_FORM_OCR_ENABLED", True):
-        ocr_result = process_document_ocr_only(
-            file_bytes=file_bytes,
-            filename=filename,
-            doc_type=doc_type,
-            request_id=request_id,
-        )
-        if not extract_json:
-            return JSONResponse(ocr_result)
-        extraction_result = run_json_extraction_from_pages(
-            doc_type=doc_type,
-            pages_result=ocr_result.get("pages", []),
-            filename=filename,
-            request_id=request_id,
-        )
-        merged_result = {
-            **ocr_result,
-            **extraction_result,
-            "pages": ocr_result.get("pages", []),
-            "global_metrics": ocr_result.get("global_metrics", {}),
-            "pipeline_metrics": {
-                **(ocr_result.get("pipeline_metrics") or {}),
-                **(extraction_result.get("pipeline_metrics") or {}),
-                "total_request_ms": int((time.time() - request_started_at) * 1000),
-            },
-        }
-        return JSONResponse(merged_result)
 
     pages_result = []
     pdf_parallel_threshold_pages = max(1, parse_int_env("PDF_PARALLEL_THRESHOLD_PAGES", 1))
@@ -3313,15 +2492,11 @@ async def start_claims_pipeline(
     created_at = time.time()
     docs: Dict[str, Any] = {}
     queued_jobs = []
-    face_documents = []
-    incoming_doc_types = list(doc_types)
-    run_face_verification = should_run_stage1_face_verification(incoming_doc_types)
 
     for idx, upload in enumerate(files):
         doc_type = doc_types[idx]
         filename = upload.filename or f"uploaded_file_{idx + 1}"
         file_bytes = await upload.read()
-        is_face_only_doc = doc_type in FACE_ONLY_DOC_TYPES
         doc_id = uuid.uuid4().hex
         request_id = doc_id[:8]
         docs[doc_id] = {
@@ -3329,41 +2504,22 @@ async def start_claims_pipeline(
             "request_id": request_id,
             "doc_type": doc_type,
             "filename": filename,
-            "status": "success" if is_face_only_doc else "queued_ocr",
-            "stage": "done" if is_face_only_doc else "ocr",
-            "result": build_face_only_document_result(doc_type, filename) if is_face_only_doc else None,
+            "status": "queued_ocr",
+            "stage": "ocr",
+            "result": None,
             "errorMsg": None,
             "created_at": created_at,
             "updated_at": created_at,
-            "completed_at": created_at if is_face_only_doc else None,
         }
-        if not is_face_only_doc:
-            queued_jobs.append({
-                "batch_id": batch_id,
-                "doc_id": doc_id,
-                "doc_type": doc_type,
-                "filename": filename,
-                "file_bytes": file_bytes,
-                "request_id": request_id,
-            })
-        if run_face_verification:
-            face_documents.append({
-                "doc_id": doc_id,
-                "request_id": request_id,
-                "doc_type": doc_type,
-                "filename": filename,
-                "file_bytes": file_bytes,
-            })
+        queued_jobs.append({
+            "batch_id": batch_id,
+            "doc_id": doc_id,
+            "doc_type": doc_type,
+            "filename": filename,
+            "file_bytes": file_bytes,
+            "request_id": request_id,
+        })
 
-    face_verification_status = {
-        "enabled": run_face_verification,
-        "status": "queued" if run_face_verification else "skipped",
-        "decision": "MANUAL_REVIEW" if run_face_verification else "NOT_APPLICABLE",
-        "review_required": bool(run_face_verification),
-        "review_flags": [],
-        "created_at": created_at,
-        "updated_at": created_at,
-    }
     with PIPELINE_LOCK:
         PIPELINE_BATCHES[batch_id] = {
             "batch_id": batch_id,
@@ -3374,28 +2530,17 @@ async def start_claims_pipeline(
                 "ocr_workers": max(1, min(parse_int_env("OCR_WORKERS", 4), 8)),
                 "llm_workers": max(1, min(parse_int_env("LLM_WORKERS", 4), 8)),
                 "validation_workers": max(1, min(parse_int_env("VALIDATION_WORKERS", 2), 8)),
-                "face_workers": max(1, min(parse_int_env("FACE_VERIFY_WORKERS", 1), 4)),
                 "llm_max_concurrency": LLM_MAX_CONCURRENCY,
             },
             "counts": {},
             "docs": docs,
-            "face_verification": face_verification_status,
         }
         recompute_pipeline_batch_locked(PIPELINE_BATCHES[batch_id])
 
     for job in queued_jobs:
         OCR_QUEUE.put(job)
-    if run_face_verification:
-        FACE_QUEUE.put({
-            "batch_id": batch_id,
-            "request_id": batch_id[:8],
-            "documents": face_documents,
-        })
 
-    print(
-        f"[PIPELINE START] batch={batch_id} docs={len(docs)} "
-        f"ocr_jobs={len(queued_jobs)} face={run_face_verification}"
-    )
+    print(f"[PIPELINE START] batch={batch_id} docs={len(queued_jobs)}")
     batch = get_pipeline_batch_public(batch_id)
     return JSONResponse(batch)
 

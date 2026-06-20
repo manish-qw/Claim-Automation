@@ -1,0 +1,485 @@
+{
+  "ClaimantStatementForm": {
+    "DocumentType": "ClaimantStatementForm",
+    "LifeAssured": {
+      "Name": {},
+      "FatherOrHusbandName": {},
+      "DateOfDeath": {},
+      "DateOfCremation": {},
+      "DateOfAccident": {},
+      "CauseOfDeath": {},
+      "NatureOfDeath": {},
+      "PlaceOfDeath": {},
+      "IntimationDate": {},
+      "PlaceOfIntimationOfDeath": {},
+      "OccupationCategory": {},
+      "EmployerName": {},
+      "EmployerAddress": {},
+      "Designation": {},
+      "LastWorkingDate": {},
+      "EmployerContactPerson": {},
+      "EmployerContactNumber": {}
+    },
+    "Medical": {
+      "DiagnosisDate": {},
+      "AdmissionDate": {},
+      "DischargeDate": {},
+      "HospitalizationInLast5Years": {},
+      "HospitalizationDetails": {},
+      "CancerHistory": {},
+      "HeartDiseaseHistory": {},
+      "LiverDiseaseHistory": {},
+      "KidneyDiseaseHistory": {},
+      "LungDiseaseHistory": {},
+      "HypertensionOrDiabetesHistory": {},
+      "OtherDiseaseHistory": {},
+      "DiseaseDiagnosisDate": {}
+    },
+    "Lifestyle": {
+      "SmokingDuration": {},
+      "SmokingQuantity": {},
+      "TobaccoDuration": {},
+      "TobaccoQuantity": {},
+      "DrugIntakeDuration": {},
+      "DrugIntakeQuantity": {}
+    },
+    "Hospital": {
+      "HospitalId": {},
+      "Name": {},
+      "Address": {},
+      "MobileNumber": {},
+      "AlternateMobileNumber": {},
+      "LandlineNumber": {},
+      "EmailId": {}
+    },
+    "TreatingDoctor": {
+      "Name": {},
+      "RegistrationNumber": {},
+      "MobileNumber": {},
+      "LandlineNumber": {},
+      "EmailId": {}
+    },
+    "FamilyDoctor": {
+      "Name": {},
+      "RegistrationNumber": {},
+      "MobileNumber": {},
+      "LandlineNumber": {},
+      "EmailId": {}
+    },
+    "LastAttendingDoctor": {
+      "Name": {},
+      "RegistrationNumber": {},
+      "MobileNumber": {},
+      "LandlineNumber": {},
+      "EmailId": {}
+    },
+    "Police": {
+      "PoliceStationName": {},
+      "PoliceStationAddress": {}
+    },
+    "Claimant": {
+      "Name": {},
+      "FatherName": {},
+      "DateOfBirth": {},
+      "Gender": {},
+      "Occupation": {},
+      "RelationshipWithLifeAssured": {},
+      "PAN": {},
+      "MobileNumber": {},
+      "AlternateMobileNumber": {},
+      "LandlineNumber": {},
+      "EmailId": {},
+      "HouseOrFlatNumber": {},
+      "BuildingName": {},
+      "Street": {},
+      "AreaOrLocality": {},
+      "VillageTownCity": {},
+      "District": {},
+      "State": {},
+      "Country": {},
+      "Pincode": {},
+      "Nationality": {},
+      "IsNRI": {},
+      "IsPoliticallyExposedPerson": {}
+    },
+    "Bank": {
+      "AccountHolderName": {},
+      "AccountNumber": {},
+      "BankName": {},
+      "BranchName": {},
+      "IFSCCode": {},
+      "MICRCode": {},
+      "AccountType": {}
+    },
+    "Insurance": {
+      "PolicyNumbers": [],
+      "OtherInsurancePolicies": [
+        {
+          "PolicyNumber": {},
+          "CompanyName": {},
+          "SumAssured": {},
+          "PolicyStatus": {}
+        }
+      ]
+    },
+    "Payout": {
+      "SelectedBenefitOption": {},
+      "SelectedPayoutOption": {},
+      "IncomeInstallmentPeriod": {},
+      "IncomePaymentMode": {},
+      "IncomePercentage": {},
+      "LumpsumPercentage": {}
+    },
+    "Witness": {
+      "Name": {},
+      "Relationship": {},
+      "MobileNumber": {},
+      "Address": {}
+    },
+    "Declarant": {
+      "Name": {},
+      "Relationship": {},
+      "MobileNumber": {},
+      "Address": {},
+      "LanguageExplainedIn": {}
+    },
+    "AdditionalRemarks": [],
+    "UnmappedFields": []
+  },
+  "DeathCertificate": {
+    "DocumentType": "DeathCertificate",
+    "Deceased": {
+      "Name": {},
+      "Gender": {},
+      "DateOfBirth": {},
+      "AgeAtDeath": {},
+      "DateOfDeath": {},
+      "TimeOfDeath": {},
+      "DateOfCremation": {},
+      "DateOfAccident": {},
+      "CauseOfDeath": {}
+    },
+    "Identifiers": {
+      "DeceasedAadhaarNumber": {},
+      "UIDOfDeceased": {}
+    },
+    "Family": {
+      "FatherName": {},
+      "FatherAadhaarNumber": {},
+      "MotherName": {},
+      "MotherAadhaarNumber": {},
+      "SpouseName": {},
+      "SpouseAadhaarNumber": {}
+    },
+    "DeathLocation": {
+      "PlaceOfDeath": {},
+      "InstitutionName": {},
+      "InstitutionType": {},
+      "InstitutionAddress": {}
+    },
+    "Addresses": {
+      "AddressAtTimeOfDeath": {},
+      "PermanentAddress": {},
+      "HouseOrFlatNumber": {},
+      "BuildingName": {},
+      "Street": {},
+      "AreaOrLocality": {},
+      "VillageTownCity": {},
+      "Locality": {},
+      "SubDistrict": {},
+      "District": {},
+      "State": {},
+      "Country": {},
+      "Pincode": {}
+    },
+    "Registration": {
+      "RegistrationNumber": {},
+      "ApplicationNumber": {},
+      "DateOfRegistration": {},
+      "DateOfIssue": {},
+      "IssueTehsil": {},
+      "IssueVillage": {},
+      "UpdatedOn": {},
+      "Remarks": {}
+    },
+    "IssuingAuthority": {
+      "AuthorityName": {},
+      "AuthorityDesignation": {},
+      "IssuingOfficerPositionName": {},
+      "OfficeName": {},
+      "LocalBodyName": {},
+      "District": {},
+      "State": {}
+    },
+    "CertificateMetadata": {
+      "FormNumber": {},
+      "CertificateType": {},
+      "QRCodePresent": {},
+      "BarcodePresent": {},
+      "DigitalCertificate": {}
+    },
+    "AdditionalRemarks": [],
+    "UnmappedFields": []
+  },
+  "AadhaarCard": {
+    "DocumentType": "AadhaarCard",
+    "Person": {
+      "FullName": {},
+      "Gender": {},
+      "DateOfBirth": {},
+      "YearOfBirth": {},
+      "Age": {}
+    },
+    "Identifiers": {
+      "AadhaarNumber": {},
+      "MaskedAadhaarNumber": {},
+      "VID": {},
+      "EnrollmentNumber": {}
+    },
+    "Family": {
+      "FatherName": {},
+      "MotherName": {},
+      "SpouseName": {},
+      "GuardianName": {},
+      "RelationshipType": {}
+    },
+    "Address": {
+      "FullAddress": {},
+      "CareOf": {},
+      "HouseOrFlatNumber": {},
+      "BuildingName": {},
+      "Street": {},
+      "AreaOrLocality": {},
+      "VillageTownCity": {},
+      "PostOffice": {},
+      "SubDistrict": {},
+      "District": {},
+      "State": {},
+      "Country": {},
+      "Pincode": {}
+    },
+    "Contact": {
+      "MobileNumber": {},
+      "EmailId": {}
+    },
+    "Metadata": {
+      "IssueDate": {},
+      "DownloadDate": {},
+      "Language": {},
+      "AadhaarType": {}
+    },
+    "AdditionalRemarks": [],
+    "UnmappedFields": []
+  },
+  "Passport": {
+    "DocumentType": "Passport",
+    "Person": {
+      "FullName": {},
+      "Surname": {},
+      "GivenNames": {},
+      "Gender": {},
+      "Nationality": {},
+      "DateOfBirth": {},
+      "PlaceOfBirth": {}
+    },
+    "Passport": {
+      "PassportNumber": {},
+      "PassportType": {},
+      "CountryCode": {},
+      "DateOfIssue": {},
+      "DateOfExpiry": {},
+      "PlaceOfIssue": {},
+      "FileNumber": {},
+      "PreviousPassportNumber": {},
+      "PreviousPassportIssueDate": {},
+      "PreviousPassportIssuePlace": {}
+    },
+    "Family": {
+      "FatherName": {},
+      "MotherName": {},
+      "SpouseName": {},
+      "LegalGuardianName": {}
+    },
+    "Address": {
+      "FullAddress": {},
+      "HouseOrFlatNumber": {},
+      "BuildingName": {},
+      "Street": {},
+      "AreaOrLocality": {},
+      "VillageTownCity": {},
+      "District": {},
+      "State": {},
+      "Country": {},
+      "Pincode": {}
+    },
+    "Identifiers": {
+      "NationalIdentityNumber": {},
+      "AadhaarNumber": {}
+    },
+    "TravelDocument": {
+      "MRZLine1": {},
+      "MRZLine2": {}
+    },
+    "AdditionalRemarks": [],
+    "UnmappedFields": []
+  },
+  "DrivingLicence": {
+    "DocumentType": "DrivingLicence",
+    "Person": {
+      "FullName": {},
+      "DateOfBirth": {},
+      "Gender": {},
+      "BloodGroup": {},
+      "OrganDonor": {}
+    },
+    "Identifiers": {
+      "DrivingLicenceNumber": {},
+      "ReferenceNumber": {},
+      "FileNumber": {}
+    },
+    "Family": {
+      "FatherName": {},
+      "MotherName": {},
+      "SpouseName": {},
+      "GuardianName": {},
+      "RelationshipType": {}
+    },
+    "Address": {
+      "PresentAddress": {},
+      "PermanentAddress": {},
+      "HouseOrFlatNumber": {},
+      "BuildingName": {},
+      "Street": {},
+      "AreaOrLocality": {},
+      "VillageTownCity": {},
+      "District": {},
+      "State": {},
+      "Country": {},
+      "Pincode": {}
+    },
+    "Licence": {
+      "IssuingAuthority": {},
+      "IssuingRTO": {},
+      "IssueDate": {},
+      "FirstIssueDate": {},
+      "ValidFrom": {},
+      "ValidTo": {},
+      "NonTransportValidity": {},
+      "TransportValidity": {},
+      "HazardousValidity": {},
+      "HillValidity": {}
+    },
+    "VehicleAuthorizations": [
+      {
+        "VehicleClass": {},
+        "VehicleCode": {},
+        "IssueDate": {},
+        "VehicleCategory": {},
+        "BadgeNumber": {},
+        "BadgeIssueDate": {}
+      }
+    ],
+    "EmergencyContact": {
+      "MobileNumber": {}
+    },
+    "AdditionalRemarks": [],
+    "UnmappedFields": []
+  },
+  "VoterID": {
+    "DocumentType": "VoterID",
+    "Person": {
+      "FullName": {},
+      "Gender": {},
+      "DateOfBirth": {},
+      "Age": {},
+      "PhotoPresent": {}
+    },
+    "Identifiers": {
+      "EPICNumber": {},
+      "VoterIDNumber": {}
+    },
+    "Family": {
+      "FatherName": {},
+      "MotherName": {},
+      "SpouseName": {},
+      "GuardianName": {},
+      "RelationshipType": {}
+    },
+    "Address": {
+      "FullAddress": {},
+      "HouseOrFlatNumber": {},
+      "BuildingName": {},
+      "Street": {},
+      "AreaOrLocality": {},
+      "VillageTownCity": {},
+      "District": {},
+      "State": {},
+      "Country": {},
+      "Pincode": {}
+    },
+    "ElectoralDetails": {
+      "AssemblyConstituencyNumber": {},
+      "AssemblyConstituencyName": {},
+      "ParliamentaryConstituency": {},
+      "PartNumber": {},
+      "SerialNumberInElectoralRoll": {},
+      "PollingStationName": {}
+    },
+    "IssuingAuthority": {
+      "ElectoralRegistrationOfficer": {},
+      "EROOffice": {},
+      "IssueDate": {},
+      "DownloadDate": {}
+    },
+    "CertificateMetadata": {
+      "QRCodePresent": {},
+      "BarcodePresent": {},
+      "DigitalEPIC": {},
+      "Language": {}
+    },
+    "AdditionalRemarks": [],
+    "UnmappedFields": []
+  },
+  "PANCard": {
+    "DocumentType": "PANCard",
+    "Person": {
+      "FullName": {},
+      "DateOfBirth": {},
+      "Gender": {}
+    },
+    "Identifiers": {
+      "PANNumber": {}
+    },
+    "Family": {
+      "FatherName": {},
+      "MotherName": {},
+      "SpouseName": {},
+      "GuardianName": {},
+      "RelationshipType": {}
+    },
+    "IssuingAuthority": {
+      "AuthorityName": {},
+      "IssueDate": {}
+    },
+    "CertificateMetadata": {
+      "CardVersion": {},
+      "DigitalPAN": {}
+    },
+    "AdditionalRemarks": [],
+    "UnmappedFields": []
+  },
+  "BankProof": {
+    "DocumentType": "BankProof",
+    "Bank": {
+      "AccountHolderName": {},
+      "AccountNumber": {},
+      "BankName": {},
+      "BranchName": {},
+      "IFSCCode": {},
+      "MICRCode": {},
+      "AccountType": {}
+    },
+    "AdditionalRemarks": [],
+    "UnmappedFields": []
+  }
+}

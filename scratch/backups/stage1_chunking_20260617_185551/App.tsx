@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 import { DocumentCard, FileState } from './components/DocumentCard';
 
-type DocType = 'CLAIMANT_RECENT_PHOTOGRAPH' | 'CLAIMANT_STATEMENT_FORM' | 'DEATH_CERTIFICATE' | 'IDENTITY_PROOF' | 'ADDRESS_PROOF' | 'PAN_CARD' | 'BANK_PROOF';
+type DocType = 'CLAIMANT_STATEMENT_FORM' | 'DEATH_CERTIFICATE' | 'IDENTITY_PROOF' | 'ADDRESS_PROOF' | 'PAN_CARD' | 'BANK_PROOF';
 
 const STEP1_DOC_CONFIG: Record<DocType, { title: string; desc: string }> = {
-  CLAIMANT_RECENT_PHOTOGRAPH: { title: 'Recent Photograph of Claimant', desc: 'Recent claimant photo used only for face verification.' },
   CLAIMANT_STATEMENT_FORM: { title: 'Claimant Statement', desc: 'Signed claimant statement details form.' },
   DEATH_CERTIFICATE: { title: 'Death Certificate', desc: 'Official death registry certificate confirming details.' },
   IDENTITY_PROOF: { title: 'Photo Identity Proof', desc: 'Upload Aadhaar, Passport, DL, or Voter ID. Auto-detected.' },
@@ -42,18 +41,12 @@ const createInitialState = (config: Record<string, any>) => {
   return state;
 };
 
-const isFaceVerificationTerminal = (face: any) => {
-  if (!face || !face.status) return true;
-  return ['completed', 'skipped', 'dependency_missing', 'error', 'disabled'].includes(face.status);
-};
-
 export default function App() {
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [deathCategory, setDeathCategory] = useState<'NATURAL_OR_MEDICAL' | 'UNNATURAL' | null>(null);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [modalDetectionType, setModalDetectionType] = useState<'AUTO' | 'MANUAL'>('MANUAL');
-  const [faceVerification, setFaceVerification] = useState<any>(null);
 
   // Step 1 Files
   const [files, setFiles] = useState<Record<string, FileState>>(createInitialState(STEP1_DOC_CONFIG));
@@ -66,7 +59,7 @@ export default function App() {
   const activeConfig = currentStep === 1 ? STEP1_DOC_CONFIG : (deathCategory === 'NATURAL_OR_MEDICAL' ? NATURAL_DOC_CONFIG : UNNATURAL_DOC_CONFIG);
 
   const isProceedReady = Object.values(activeFiles).some(f => f.file !== null);
-  const hasResults = Object.values(activeFiles).some(f => f.result !== null && !f.result?.face_only);
+  const hasResults = Object.values(activeFiles).some(f => f.result !== null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, docType: string) => {
     if (e.target.files && e.target.files[0]) {
@@ -88,9 +81,6 @@ export default function App() {
   const triggerParallelOCR = async () => {
     if (!isProceedReady) return;
     setIsProcessing(true);
-    if (currentStep === 1) {
-      setFaceVerification(null);
-    }
 
     setActiveFiles(prev => {
       const updated = { ...prev };
@@ -127,14 +117,10 @@ export default function App() {
       }
 
       let batch = await startResponse.json();
-      const applyBatchState = (nextBatch: any) => {
-        const docs = nextBatch.docs || [];
-        if (currentStep === 1) {
-          setFaceVerification(nextBatch.face_verification || null);
-        }
+      const applyBatchDocs = (docs: any[]) => {
         setActiveFiles(prev => {
           const updated = { ...prev };
-          docs.forEach((doc: any) => {
+          docs.forEach(doc => {
             const existing = updated[doc.doc_type];
             if (!existing) return;
             let status: FileState['status'] = 'scanning';
@@ -159,8 +145,8 @@ export default function App() {
         });
       };
 
-      applyBatchState(batch);
-      while (batch.status !== 'completed' || !isFaceVerificationTerminal(batch.face_verification)) {
+      applyBatchDocs(batch.docs || []);
+      while (batch.status !== 'completed') {
         await new Promise(resolve => setTimeout(resolve, 700));
         const statusResponse = await fetch(`/v1/claims/pipeline/${batch.batch_id}`);
         if (!statusResponse.ok) {
@@ -168,7 +154,7 @@ export default function App() {
           throw new Error(errData.detail || `Server returned ${statusResponse.status}`);
         }
         batch = await statusResponse.json();
-        applyBatchState(batch);
+        applyBatchDocs(batch.docs || []);
       }
 
       results = (batch.docs || []).map((doc: any) => ({
@@ -323,7 +309,7 @@ export default function App() {
 
                 if (status === 'success') {
                   statusColor = 'text-emerald-400';
-                  statusLabel = activeFiles[type].result?.face_only ? `Captured in ${time}ms` : `Scanned in ${time}ms`;
+                  statusLabel = `Scanned in ${time}ms`;
                 } else if (status === 'extracting') {
                   statusColor = 'text-blue-400';
                   statusLabel = `OCR done, generating JSON...`;
@@ -349,68 +335,6 @@ export default function App() {
                 );
               })}
             </div>
-          </div>
-        )}
-
-        {currentStep === 1 && faceVerification && faceVerification.status !== 'skipped' && (
-          <div className="flex flex-col gap-4 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-bold text-white">Photo Comparison</h3>
-                <p className="text-xs text-slate-400">
-                  {faceVerification.status === 'queued' || faceVerification.status === 'running'
-                    ? 'Comparing the recent claimant photograph with all uploaded claimant photo documents.'
-                    : `Decision: ${String(faceVerification.decision || 'MANUAL_REVIEW').replace(/_/g, ' ')}`}
-                </p>
-              </div>
-              <div className={`px-3 py-1.5 rounded-lg border text-xs font-bold ${
-                faceVerification.decision === 'MATCH'
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                  : faceVerification.decision === 'NO_MATCH'
-                    ? 'bg-red-500/10 border-red-500/30 text-red-300'
-                    : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
-              }`}>
-                {faceVerification.status === 'queued' || faceVerification.status === 'running'
-                  ? 'RUNNING'
-                  : String(faceVerification.decision || faceVerification.status || 'PENDING').replace(/_/g, ' ')}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Overall Confidence</span>
-                <p className="text-xl font-bold text-white mt-1">
-                  {faceVerification.overall_confidence != null ? `${faceVerification.overall_confidence}%` : 'Review'}
-                </p>
-              </div>
-              <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Model</span>
-                <p className="text-sm font-semibold text-slate-200 mt-1">
-                  {faceVerification.model || 'Facenet512'} / {faceVerification.detector_backend || 'retinaface'}
-                </p>
-              </div>
-              <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Review Flags</span>
-                <p className="text-sm font-semibold text-slate-200 mt-1">
-                  {faceVerification.review_flags?.length ? faceVerification.review_flags.join(', ') : 'None'}
-                </p>
-              </div>
-            </div>
-
-            {faceVerification.document_results?.some((doc: any) => doc.face_preview) && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {faceVerification.document_results.map((doc: any) => doc.face_preview ? (
-                  <div key={doc.doc_id} className="bg-slate-950/60 border border-slate-800 rounded-xl p-3">
-                    <img src={doc.face_preview} alt="" className="w-full aspect-square object-cover rounded-lg mb-2" />
-                    <p className="text-[10px] font-bold text-slate-300 truncate">{doc.label || doc.doc_type}</p>
-                  </div>
-                ) : null)}
-              </div>
-            )}
-
-            <pre className="bg-slate-950 border border-slate-800 rounded-xl p-4 text-[11px] text-slate-300 overflow-x-auto max-h-[320px]">
-              {JSON.stringify(faceVerification, null, 2)}
-            </pre>
           </div>
         )}
 
