@@ -27,6 +27,24 @@ from api.validation_rules import validate_document
 
 FACE_ONLY_DOC_TYPES = {"CLAIMANT_RECENT_PHOTOGRAPH"}
 
+SCHEMA_METADATA_DEFAULTS: Dict[str, Any] = {
+    "document_id": "",
+    "document_type": "",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0,
+    "trust_score": 0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": False,
+    "is_blurry": False,
+    "is_tampered": False,
+    "verification_status": "",
+    "validation_flags": [],
+}
+SCHEMA_METADATA_FIELDS = list(SCHEMA_METADATA_DEFAULTS.keys())
+
 DOC_TYPE_MAPPING = {
     "CLAIMANT_STATEMENT_FORM": "ClaimantStatementForm",
     "DEATH_CERTIFICATE": "DeathCertificate",
@@ -85,7 +103,12 @@ Use CLEAN_TEXT for actual value extraction.
 
 ## OUTPUT FORMAT
 Every field in the schema must appear in your output.
-Each field must be an object with exactly these four keys:
+Standard metadata fields must follow the primitive/list type shown in the schema:
+document_id, document_type, file_name, uploaded_by, uploaded_at,
+ocr_confidence, trust_score, document_language, pages, is_handwritten,
+is_blurry, is_tampered, verification_status, validation_flags.
+
+Every document content field must be an object with exactly these four keys:
 
 {{
   "value": <extracted value as string, or null if not found>,
@@ -109,7 +132,7 @@ or is an object of four-key structures for object arrays.
    - Phone numbers: strip spaces and dashes, keep country code if present.
    - Names: Title Case. Remove extra spaces.
    - Boolean fields (Yes/No, checkboxes): output as true/false.
-   - Enum/checkbox fields: output the selected option label exactly as listed in the schema comment.
+   - Enum/checkbox fields: output the selected option label exactly as listed in the schema/options.
    - PAN: uppercase, no spaces.
    - Pincode: 6 digits as string, no spaces.
    - Aadhaar: output masked if masked in source (XXXX XXXX 1234 format).
@@ -223,7 +246,8 @@ Rules:
 - Use only CURRENT_CHUNK_TEXT for extraction. PREVIOUS_CONTEXT is only to resolve split labels.
 - If a schema field is absent in CURRENT_CHUNK_TEXT, return null for that field.
 - Do not infer missing values from outside this chunk.
-- For scalar fields, return {{"value": string|null, "ocr_confidence": number|null, "extraction_confidence": number, "source_text": string|null}}.
+- Metadata fields keep the primitive/list type shown in the schema.
+- For document content scalar fields, return {{"value": string|null, "ocr_confidence": number|null, "extraction_confidence": number, "source_text": string|null}}.
 - Use CONF_TEXT to estimate ocr_confidence.
 - Keep arrays in page order and include only values present in this chunk.
 
@@ -537,10 +561,7 @@ def get_combined_schemas() -> Dict[str, Any]:
             try:
                 with open(os.path.join("api", schema_file), "r", encoding="utf-8") as f:
                     file_data = json.load(f)
-                    if "schemas" in file_data:
-                        merged.update(file_data["schemas"])
-                    else:
-                        merged.update(file_data)
+                    merged.update(file_data)
             except Exception as e:
                 print(f"Error loading {schema_file}: {e}")
 
@@ -548,6 +569,83 @@ def get_combined_schemas() -> Dict[str, Any]:
         _SCHEMAS_CACHE_READY = True
         print(f"[SCHEMA CACHE] loaded={len(_SCHEMAS_CACHE)}")
         return _SCHEMAS_CACHE
+
+def clone_json_value(value: Any) -> Any:
+    try:
+        return json.loads(json.dumps(value))
+    except Exception:
+        return value
+
+def strip_schema_prompt_comments(value: Any) -> Any:
+    if isinstance(value, list):
+        return [strip_schema_prompt_comments(item) for item in value]
+    if isinstance(value, dict):
+        removable_keys = re.compile(r"^_(?:comment\d*|bucket|format|note|required_critical|required_important)$")
+        return {
+            key: strip_schema_prompt_comments(item)
+            for key, item in value.items()
+            if not removable_keys.match(str(key))
+        }
+    return value
+
+def prepare_schema_for_extraction(schema_key: str, schema: Dict[str, Any]) -> Dict[str, Any]:
+    clean_schema = strip_schema_prompt_comments(clone_json_value(schema))
+    prepared: Dict[str, Any] = {}
+    for field in SCHEMA_METADATA_FIELDS:
+        if field == "document_type":
+            prepared[field] = clean_schema.get(field) or schema_key
+        else:
+            prepared[field] = clean_schema.get(field, clone_json_value(SCHEMA_METADATA_DEFAULTS[field]))
+
+    for key, value in clean_schema.items():
+        if key in SCHEMA_METADATA_FIELDS or key in {"LowConfidenceFields", "UnmappedFields"}:
+            continue
+        prepared[key] = value
+
+    prepared["LowConfidenceFields"] = clean_schema.get("LowConfidenceFields", [])
+    prepared["UnmappedFields"] = clean_schema.get("UnmappedFields", [])
+    return prepared
+
+def calculate_document_ocr_confidence(pages_result: List[Dict[str, Any]]) -> float:
+    total_words = 0
+    weighted_confidence = 0.0
+    for page in pages_result or []:
+        metrics = page.get("metrics") or {}
+        try:
+            word_count = int(metrics.get("word_count") or len(page.get("words") or []))
+            confidence = float(metrics.get("overall_confidence"))
+        except Exception:
+            continue
+        if word_count <= 0:
+            continue
+        total_words += word_count
+        weighted_confidence += confidence * word_count
+    return round(weighted_confidence / total_words, 2) if total_words > 0 else 0.0
+
+def apply_backend_schema_metadata(
+    payload: Dict[str, Any],
+    schema_key: str,
+    filename: str,
+    request_id: str,
+    pages_result: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    ocr_confidence = calculate_document_ocr_confidence(pages_result)
+    payload["document_id"] = request_id or ""
+    payload["document_type"] = schema_key or payload.get("document_type") or ""
+    payload["file_name"] = filename or payload.get("file_name") or ""
+    payload["uploaded_by"] = payload.get("uploaded_by") if isinstance(payload.get("uploaded_by"), str) else ""
+    payload["uploaded_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    payload["ocr_confidence"] = ocr_confidence
+    payload["trust_score"] = round(ocr_confidence / 100.0, 4) if ocr_confidence else 0.0
+    payload["document_language"] = payload.get("document_language") if isinstance(payload.get("document_language"), str) else ""
+    payload["pages"] = len(pages_result or [])
+    for key in ("is_handwritten", "is_blurry", "is_tampered"):
+        payload[key] = payload.get(key) if isinstance(payload.get(key), bool) else False
+    payload["verification_status"] = payload.get("verification_status") if isinstance(payload.get("verification_status"), str) else "EXTRACTED"
+    if not payload["verification_status"]:
+        payload["verification_status"] = "EXTRACTED"
+    payload["validation_flags"] = payload.get("validation_flags") if isinstance(payload.get("validation_flags"), list) else []
+    return payload
 
 # Lazy loaded OCR instances
 RAPID_OCR_INSTANCE = None
@@ -1332,12 +1430,17 @@ def run_json_extraction_from_pages(
     def normalize_extracted_payload(payload: Dict[str, Any], schema: Dict[str, Any]) -> Dict[str, Any]:
         for key in schema.keys():
             if key not in payload:
-                payload[key] = {
-                    "value": None,
-                    "ocr_confidence": None,
-                    "extraction_confidence": 0.0,
-                    "source_text": None,
-                }
+                if key in SCHEMA_METADATA_FIELDS:
+                    payload[key] = clone_json_value(schema.get(key, SCHEMA_METADATA_DEFAULTS[key]))
+                else:
+                    payload[key] = {
+                        "value": None,
+                        "ocr_confidence": None,
+                        "extraction_confidence": 0.0,
+                        "source_text": None,
+                    }
+            elif key in SCHEMA_METADATA_FIELDS and is_extraction_field_object(payload.get(key)):
+                payload[key] = clone_json_value(schema.get(key, SCHEMA_METADATA_DEFAULTS[key]))
 
         if "DeathCategory" in payload:
             dc = payload["DeathCategory"]
@@ -1351,7 +1454,7 @@ def run_json_extraction_from_pages(
             payload["LowConfidenceFields"] = []
         if "UnmappedFields" not in payload:
             payload["UnmappedFields"] = []
-        return payload
+        return apply_backend_schema_metadata(payload, schema_key, filename, request_id, pages_result)
 
     def clone_json(value: Any) -> Any:
         try:
@@ -1647,8 +1750,8 @@ def run_json_extraction_from_pages(
                 except Exception as ce:
                     print(f"[CLASSIFIER ERROR] req={request_id} error={ce}")
 
-        schema = get_combined_schemas().get(schema_key)
-        if not schema or not clean_text:
+        raw_schema = get_combined_schemas().get(schema_key)
+        if not raw_schema or not clean_text:
             return {
                 "success": True,
                 "extracted_data": None,
@@ -1668,6 +1771,7 @@ def run_json_extraction_from_pages(
                 },
             }
 
+        schema = prepare_schema_for_extraction(schema_key, raw_schema)
         schema_compact = json.dumps(schema, separators=(",", ":"))
         schema_token_estimate = estimate_llm_tokens(schema_compact)
         full_clean_text = "\n".join(page.get("clean_text", "") for page in page_inputs if page.get("clean_text"))
@@ -2877,9 +2981,10 @@ def run_claims_ocr(
                         print("Classification Error:", ce)
 
             # --- STAGE 2: LLM EXTRACTION ---
-            schema = get_combined_schemas().get(schema_key)
+            raw_schema = get_combined_schemas().get(schema_key)
 
-            if schema and clean_text:
+            if raw_schema and clean_text:
+                schema = prepare_schema_for_extraction(schema_key, raw_schema)
                 schema_compact = json.dumps(schema, separators=(",", ":"))
                 prompt = PROMPT_TEMPLATE.format(
                     DOCUMENT_TYPE=schema_key,
@@ -2911,12 +3016,17 @@ def run_claims_ocr(
                 def normalize_extracted_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
                     for key in schema.keys():
                         if key not in payload:
-                            payload[key] = {
-                                "value": None,
-                                "ocr_confidence": None,
-                                "extraction_confidence": 0.0,
-                                "source_text": None,
-                            }
+                            if key in SCHEMA_METADATA_FIELDS:
+                                payload[key] = clone_json_value(schema.get(key, SCHEMA_METADATA_DEFAULTS[key]))
+                            else:
+                                payload[key] = {
+                                    "value": None,
+                                    "ocr_confidence": None,
+                                    "extraction_confidence": 0.0,
+                                    "source_text": None,
+                                }
+                        elif key in SCHEMA_METADATA_FIELDS and is_extraction_field_object(payload.get(key)):
+                            payload[key] = clone_json_value(schema.get(key, SCHEMA_METADATA_DEFAULTS[key]))
 
                     if "DeathCategory" in payload:
                         dc = payload["DeathCategory"]
@@ -2930,7 +3040,7 @@ def run_claims_ocr(
                         payload["LowConfidenceFields"] = []
                     if "UnmappedFields" not in payload:
                         payload["UnmappedFields"] = []
-                    return payload
+                    return apply_backend_schema_metadata(payload, schema_key, filename, request_id, pages_result)
 
                 def try_cloud_fallback(reason: str):
                     nonlocal fallback_extraction_ms, llm_provider, llm_model, llm_fallback_used, llm_fallback_reason

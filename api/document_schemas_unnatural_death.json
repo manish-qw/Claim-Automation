@@ -1,92 +1,1525 @@
 {
-    "_comment": "==============================================================================",
-    "_comment2": "UNNATURAL DEATH DOCUMENTS",
-    "_comment3": "Cause: Accidents (Road/Rail/Air), Murder, Suicide, etc.",
-    "_comment4": "",
-    "_comment5": "SHARED WITH NATURAL DEATH — schemas already generated, do not duplicate:",
-    "_comment6": "  - MedicoLegalCauseOfDeathCertificate  (natural_death_schemas.json → Bucket 2)",
-    "_comment7": "  - MedicalAttendantHospitalCertificate  (natural_death_schemas.json → Bucket 1)",
-    "_comment8": "  - EmployerCertificate                  (natural_death_schemas.json → Bucket 1)",
-    "_comment9": "  - DischargeSummary                     (natural_death_schemas.json → Bucket 2)",
-    "_comment10": "  - AdmissionForm                       (natural_death_schemas.json → Bucket 2)",
-    "_comment11": "  - IndoorCasePapers                    (natural_death_schemas.json → Bucket 2)",
-    "_comment12": "",
-    "_comment13": "NOTE: 'Hospitalization / treatment records if any' for unnatural death",
-    "_comment14": "      maps to the same DischargeSummary + AdmissionForm + IndoorCasePapers",
-    "_comment15": "      schemas already defined. Use those directly.",
-    "_comment16": "",
-    "_comment17": "NEW SCHEMAS IN THIS FILE:",
-    "_comment18": "  BUCKET 2 — Semi-structured:",
-    "_comment19": "    1. FirstInformationReport (FIR)",
-    "_comment20": "    2. InquestPanchananaReport",
-    "_comment21": "    3. FinalPoliceInvestigationReport",
-    "_comment22": "    4. PostmortemReport (PMR)",
-    "_comment23": "  BUCKET 3 — Variable / facts-only:",
-    "_comment24": "    5. VisceraChemicalExaminationReport",
-    "_comment25": "    6. NewspaperCutting",
-    "_comment26": "  BUCKET 1 — Fixed format (reuse existing DrivingLicence schema from govt IDs):",
-    "_comment27": "    7. DrivingLicenceOfLifeAssured — NOTE BELOW",
-    "_comment28": "",
-    "_comment29": "  DrivingLicence of LA: use existing DrivingLicence govt ID schema.",
-    "_comment30": "  The only difference is document_type tag → 'DrivingLicenceOfLifeAssured'",
-    "_comment31": "  and a mandatory check on ValidTo (licence must be valid on date of accident).",
-    "_comment32": "==============================================================================",
-    "schemas": {
-        "FirstInformationReport": {
-            "_bucket": 2,
-            "_format": "Semi-structured — police-issued, format varies by state, target extraction",
-            "_note": "FIR format is governed by CrPC Section 154 but layout, language, and fields vary significantly by state. Core fields (FIR number, section, date, incident) are consistent. Extract all available — null for absent.",
-            "_required_critical": [
-                "FIRNumber",
-                "DateOfFIR",
-                "NatureOfIncident",
-                "Deceased.Name"
+    "FirstInformationReport": {
+        "document_id": "",
+        "document_type": "FirstInformationReport",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "FIRNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "DateOfFIR": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "TimeOfFIR": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "LegalSectionsInvoked": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "NatureOfIncident": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "RoadAccident",
+                    "RailAccident",
+                    "AirAccident",
+                    "Murder",
+                    "Suicide",
+                    "Drowning",
+                    "Fall",
+                    "Electrocution",
+                    "Burns",
+                    "Poisoning",
+                    "Other"
+                ]
+            },
+            "NatureOfIncidentOther": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "PoliceStation": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "District": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Complainant": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "FatherOrHusbandName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RelationshipWithDeceased": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Deceased": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "FatherOrHusbandName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Incident": {
+                "Date": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Time": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Location": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "District": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Description": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Vehicle": {
+                "VehicleNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "VehicleType": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "VehicleOwnerName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DriverName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DriverLicenceNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "InsuranceDetails": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Accused": [
+                {
+                    "Name": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "FatherName": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "Age": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "Address": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "RelationWithDeceased": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    }
+                }
             ],
-            "_required_important": [
-                "PoliceStation.Name",
-                "Incident.Date",
-                "Incident.Location",
-                "InvestigatingOfficer.Name"
+            "Witnesses": [
+                {
+                    "Name": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "Address": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "ContactNumber": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    }
+                }
             ],
-            "document_id": "",
-            "document_type": "FirstInformationReport",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "FIRNumber": {
+            "InvestigatingOfficer": {
+                "Name": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "DateOfFIR": {
+                "Designation": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "TimeOfFIR": {
+                "BadgeOrBeltNumber": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "LegalSectionsInvoked": {
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Registration": {
+                "DateOfRegistration": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SealPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": "UNNATURAL",
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "InquestPanchananaReport": {
+        "document_id": "",
+        "document_type": "InquestPanchananaReport",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "ReportNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "ReportType": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "Inquest",
+                    "Panchanama",
+                    "InquestPanchanama"
+                ]
+            },
+            "CrPCSection": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "174",
+                    "176",
+                    null
+                ]
+            },
+            "FIRNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "DateOfInquest": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "TimeOfInquest": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "Deceased": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "FatherOrHusbandName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Occupation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Incident": {
+                "DateOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "TimeOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Location": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "District": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "SceneObservations": {
+                "BodyConditionNotes": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "InjuriesObserved": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "InjuryLocations": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ClothingDescription": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ArticlesFoundAtScene": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "VehicleDetails": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SurroundingsDescription": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "SuspectedCauseOfDeath": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "MannerOfDeath": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "Accident",
+                    "Murder",
+                    "Suicide",
+                    "NaturalCauses",
+                    "Undetermined"
+                ]
+            },
+            "PostmortemRecommended": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "Witnesses": [
+                {
+                    "Name": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "FatherName": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "Address": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "SignaturePresent": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    }
+                }
+            ],
+            "ConductingOfficer": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Designation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "BadgeOrBeltNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PoliceStationName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SealPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": "UNNATURAL",
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "FinalPoliceInvestigationReport": {
+        "document_id": "",
+        "document_type": "FinalPoliceInvestigationReport",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "ReportType": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "Chargesheet",
+                    "ClosureReport",
+                    "FinalReport",
+                    "SummaryReport"
+                ]
+            },
+            "FIRNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "DateOfReport": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "CrPCSection": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "PoliceStation": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "District": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Deceased": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "FatherOrHusbandName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Incident": {
+                "Date": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Location": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "NatureOfIncident": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null,
-                    "_note": "IPC sections e.g. 302, 304A, 307 — array as comma-separated string"
+                    "_enum": [
+                        "RoadAccident",
+                        "RailAccident",
+                        "AirAccident",
+                        "Murder",
+                        "Suicide",
+                        "Drowning",
+                        "Fall",
+                        "Electrocution",
+                        "Burns",
+                        "Poisoning",
+                        "Other"
+                    ]
+                }
+            },
+            "Investigation": {
+                "Summary": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "EvidenceCollected": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PostmortemConducted": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PostmortemReportNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "VisceraSentForAnalysis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "VisceraCFSLReportNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "FinalConclusion": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "NatureOfDeath": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "Accidental",
+                    "Homicidal",
+                    "Suicidal",
+                    "Natural",
+                    "Undetermined"
+                ]
+            },
+            "Accused": [
+                {
+                    "Name": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "Address": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "ArrestedOrAbsconding": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    }
+                }
+            ],
+            "CourtReferenceNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "CourtName": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "InvestigatingOfficer": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Designation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "BadgeOrBeltNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SealPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": "UNNATURAL",
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "PostmortemReport": {
+        "document_id": "",
+        "document_type": "PostmortemReport",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "PMRNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "DateOfPostmortem": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "TimeOfPostmortem": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "DateOfReport": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "FIRNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "InquestReportNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "RequisitionBy": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "Deceased": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "FatherOrHusbandName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Occupation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DateOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "EstimatedTimeOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "ExternalExamination": {
+                "BuildAndNourishment": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RigorMortis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PostmortemStaining": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ExternalInjuries": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "InjuryLocations": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ClothingCondition": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "InternalExamination": {
+                "Head": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Thorax": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Abdomen": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Neck": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignificantFindings": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "VisceraSamples": {
+                "Preserved": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SampleTypes": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SentToLab": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "LabName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "CauseOfDeath": {
+                "ImmediateCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "AntecedentCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "UnderlyingCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContributoryConditions": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "MannerOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null,
+                    "_enum": [
+                        "Accidental",
+                        "Homicidal",
+                        "Suicidal",
+                        "Natural",
+                        "Undetermined"
+                    ]
+                },
+                "FinalOpinion": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PendingViscera": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "ConductingDoctor": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Designation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Qualification": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Hospital": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "City": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SealPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": "UNNATURAL",
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "VisceraChemicalExaminationReport": {
+        "document_id": "",
+        "document_type": "VisceraChemicalExaminationReport",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "ReportNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "DateOfReport": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "DateSamplesReceived": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "PMRReferenceNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "FIRNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "Lab": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "LabCode": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Deceased": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "SamplesAnalyzed": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "Findings": {
+                "SubstancesDetected": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SubstancesNotDetected": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "AlcoholPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "AlcoholQuantity": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PoisonPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PoisonType": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DrugPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DrugType": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Conclusion": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "Examiner": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Designation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SealPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": "UNNATURAL",
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "NewspaperCutting": {
+        "document_id": "",
+        "document_type": "NewspaperCutting",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "Publication": {
+                "NewspaperName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PublicationDate": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Edition": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Language": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PageNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Article": {
+                "Headline": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ReporterName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Deceased": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Incident": {
+                "DateOfIncident": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Location": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 },
                 "NatureOfIncident": {
                     "value": null,
@@ -107,1618 +1540,27 @@
                         "Other"
                     ]
                 },
-                "NatureOfIncidentOther": {
+                "VehicleNumber": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "PoliceStation": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "District": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Complainant": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FatherOrHusbandName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RelationshipWithDeceased": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Deceased": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FatherOrHusbandName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Incident": {
-                    "Date": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Time": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Location": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "District": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Description": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Full narration of the incident as written in FIR"
-                    }
-                },
-                "Vehicle": {
-                    "_note": "Populated only for road/rail/air accident cases",
-                    "VehicleNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "VehicleType": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "VehicleOwnerName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DriverName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DriverLicenceNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "InsuranceDetails": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Accused": [
-                    {
-                        "_comment": "Array — one entry per accused person if named",
-                        "Name": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "FatherName": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "Age": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "Address": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "RelationWithDeceased": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        }
-                    }
-                ],
-                "Witnesses": [
-                    {
-                        "_comment": "Array — one entry per witness named in FIR",
-                        "Name": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "Address": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "ContactNumber": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        }
-                    }
-                ],
-                "InvestigatingOfficer": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Designation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "BadgeOrBeltNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Registration": {
-                    "DateOfRegistration": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SealPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": "UNNATURAL",
+                "OtherPersonsInvolved": {
+                    "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Always UNNATURAL for FIR documents — set by default, confirm from NatureOfIncident"
+                    "source_text": null
                 }
             },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
+            "DeathCategory": {
+                "value": "UNNATURAL",
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            }
         },
-        "InquestPanchananaReport": {
-            "_bucket": 2,
-            "_format": "Semi-structured — police/magistrate issued under CrPC Section 174/176, format varies by state",
-            "_note": "Inquest is conducted at scene of death by police (S.174 CrPC) or magistrate (S.176 CrPC for suspicious deaths). Panchanama is the scene observation report. Both captured here as they are often a single combined document.",
-            "_required_critical": [
-                "ReportNumber",
-                "DateOfInquest",
-                "Deceased.Name",
-                "SuspectedCauseOfDeath"
-            ],
-            "_required_important": [
-                "Incident.Location",
-                "ConductingOfficer.Name",
-                "Witnesses",
-                "BodyConditionNotes"
-            ],
-            "document_id": "",
-            "document_type": "InquestPanchananaReport",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "ReportNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "ReportType": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "Inquest",
-                        "Panchanama",
-                        "InquestPanchanama"
-                    ],
-                    "_note": "S.174 CrPC = Police Inquest, S.176 CrPC = Magistrate Inquest"
-                },
-                "CrPCSection": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "174",
-                        "176",
-                        null
-                    ]
-                },
-                "FIRNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Cross-reference with FIR — must match"
-                },
-                "DateOfInquest": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "TimeOfInquest": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "Deceased": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FatherOrHusbandName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Occupation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Incident": {
-                    "DateOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "TimeOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Location": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "District": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "SceneObservations": {
-                    "BodyConditionNotes": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Physical condition of body as observed — rigor mortis, injuries, decomposition etc."
-                    },
-                    "InjuriesObserved": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "InjuryLocations": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ClothingDescription": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ArticlesFoundAtScene": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "VehicleDetails": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Vehicle involved if accident"
-                    },
-                    "SurroundingsDescription": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "SuspectedCauseOfDeath": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Officer's preliminary opinion — not final cause"
-                },
-                "MannerOfDeath": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "Accident",
-                        "Murder",
-                        "Suicide",
-                        "NaturalCauses",
-                        "Undetermined"
-                    ]
-                },
-                "PostmortemRecommended": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "Witnesses": [
-                    {
-                        "_comment": "Array — panchas (witnesses) who signed the inquest",
-                        "Name": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "FatherName": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "Address": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "SignaturePresent": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        }
-                    }
-                ],
-                "ConductingOfficer": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Designation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "BadgeOrBeltNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PoliceStationName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SealPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": "UNNATURAL",
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Always UNNATURAL — inquest is only conducted for unnatural or suspicious deaths"
-                }
-            },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "FinalPoliceInvestigationReport": {
-            "_bucket": 2,
-            "_format": "Semi-structured — police issued (chargesheet or closure report), format varies by state",
-            "_note": "Also called Chargesheet (if crime established) or Closure/FR Report (if no crime). Filed under CrPC Section 173. This is the most legally significant police document — it records the final police conclusion after investigation.",
-            "_required_critical": [
-                "FIRNumber",
-                "ReportType",
-                "FinalConclusion",
-                "Deceased.Name"
-            ],
-            "_required_important": [
-                "DateOfReport",
-                "InvestigatingOfficer.Name",
-                "NatureOfDeath",
-                "CourtReferenceNumber"
-            ],
-            "document_id": "",
-            "document_type": "FinalPoliceInvestigationReport",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "ReportType": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "Chargesheet",
-                        "ClosureReport",
-                        "FinalReport",
-                        "SummaryReport"
-                    ],
-                    "_note": "Chargesheet = crime established, ClosureReport = no crime / accidental"
-                },
-                "FIRNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Must match FIR number on FIR document — cross-reference check"
-                },
-                "DateOfReport": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "CrPCSection": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "CrPC 173 — report submitted to magistrate"
-                },
-                "PoliceStation": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "District": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Deceased": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FatherOrHusbandName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Incident": {
-                    "Date": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Location": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "NatureOfIncident": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "RoadAccident",
-                            "RailAccident",
-                            "AirAccident",
-                            "Murder",
-                            "Suicide",
-                            "Drowning",
-                            "Fall",
-                            "Electrocution",
-                            "Burns",
-                            "Poisoning",
-                            "Other"
-                        ]
-                    }
-                },
-                "Investigation": {
-                    "Summary": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Brief summary of what investigation found"
-                    },
-                    "EvidenceCollected": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PostmortemConducted": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PostmortemReportNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "VisceraSentForAnalysis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "VisceraCFSLReportNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Central Forensic Science Laboratory report reference"
-                    }
-                },
-                "FinalConclusion": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Police final conclusion on manner of death — most critical field"
-                },
-                "NatureOfDeath": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "Accidental",
-                        "Homicidal",
-                        "Suicidal",
-                        "Natural",
-                        "Undetermined"
-                    ]
-                },
-                "Accused": [
-                    {
-                        "_comment": "Array — relevant only for murder/homicide cases",
-                        "Name": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "Address": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "ArrestedOrAbsconding": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        }
-                    }
-                ],
-                "CourtReferenceNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Case number under which report filed in court"
-                },
-                "CourtName": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "InvestigatingOfficer": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Designation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "BadgeOrBeltNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SealPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": "UNNATURAL",
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Always UNNATURAL — final report is only filed for unnatural/suspicious deaths"
-                }
-            },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "PostmortemReport": {
-            "_bucket": 2,
-            "_format": "Semi-structured — hospital/forensic dept issued, government format with state variation",
-            "_note": "PMR is the most medically authoritative document for unnatural death. Issued by a government medical officer. Format follows MLO (Medico-Legal Officer) guidelines but varies by state hospital. Most critical fields are consistent.",
-            "_required_critical": [
-                "PMRNumber",
-                "DateOfPostmortem",
-                "Deceased.Name",
-                "CauseOfDeath.FinalOpinion"
-            ],
-            "_required_important": [
-                "Deceased.Age",
-                "Deceased.Gender",
-                "TimeOfPostmortem",
-                "ConductingDoctor.Name",
-                "Hospital.Name",
-                "FIRNumber"
-            ],
-            "document_id": "",
-            "document_type": "PostmortemReport",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "PMRNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "DateOfPostmortem": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "TimeOfPostmortem": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "DateOfReport": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "FIRNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Cross-reference with FIR and Inquest report"
-                },
-                "InquestReportNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "RequisitionBy": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Name and designation of police officer who requisitioned the PM"
-                },
-                "Deceased": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FatherOrHusbandName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Occupation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DateOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "EstimatedTimeOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "ExternalExamination": {
-                    "BuildAndNourishment": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RigorMortis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PostmortemStaining": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ExternalInjuries": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Description of all external injuries — critical for accident vs assault determination"
-                    },
-                    "InjuryLocations": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ClothingCondition": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "InternalExamination": {
-                    "Head": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Thorax": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Abdomen": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Neck": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignificantFindings": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Extract only findings material to cause of death"
-                    }
-                },
-                "VisceraSamples": {
-                    "Preserved": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SampleTypes": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Stomach contents, liver, kidney, blood, etc."
-                    },
-                    "SentToLab": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "LabName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "CauseOfDeath": {
-                    "ImmediateCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Part I(a) — disease/injury directly causing death"
-                    },
-                    "AntecedentCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Part I(b) — condition that caused immediate cause"
-                    },
-                    "UnderlyingCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Part I(c) — root underlying cause"
-                    },
-                    "ContributoryConditions": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Part II — other significant conditions"
-                    },
-                    "MannerOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "Accidental",
-                            "Homicidal",
-                            "Suicidal",
-                            "Natural",
-                            "Undetermined"
-                        ]
-                    },
-                    "FinalOpinion": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Doctor's final stated opinion — most critical field in entire document"
-                    },
-                    "PendingViscera": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "True if final cause pending viscera report — changes claim workflow"
-                    }
-                },
-                "ConductingDoctor": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Designation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Qualification": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Hospital": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "City": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SealPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": "UNNATURAL",
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Always UNNATURAL — PMR is only conducted for unnatural or suspicious deaths"
-                }
-            },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "VisceraChemicalExaminationReport": {
-            "_bucket": 3,
-            "_format": "Variable — forensic lab issued, format varies significantly by lab and state",
-            "_note": "Issued by FSL (Forensic Science Laboratory) / CFSL after chemical analysis of viscera samples preserved at PMR. Critical for poisoning / drug overdose cases. Format is lab-specific but conclusion section is always present.",
-            "_required_critical": [
-                "Deceased.Name",
-                "Conclusion"
-            ],
-            "_required_important": [
-                "ReportNumber",
-                "LabName",
-                "DateOfReport",
-                "SamplesAnalyzed"
-            ],
-            "document_id": "",
-            "document_type": "VisceraChemicalExaminationReport",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "ReportNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "DateOfReport": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "DateSamplesReceived": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "PMRReferenceNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "PMR number under which samples were preserved — cross-reference"
-                },
-                "FIRNumber": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null
-                },
-                "Lab": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "LabCode": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Deceased": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "SamplesAnalyzed": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "List of sample types received — stomach contents, liver, kidney, blood, urine, etc."
-                },
-                "Findings": {
-                    "SubstancesDetected": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "CRITICAL — any toxic substance, drug, poison, alcohol found. List as comma-separated."
-                    },
-                    "SubstancesNotDetected": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "AlcoholPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "AlcoholQuantity": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PoisonPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PoisonType": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DrugPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DrugType": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Conclusion": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Forensic examiner's final conclusion — always present, most critical field"
-                },
-                "Examiner": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Designation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SealPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": "UNNATURAL",
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Always UNNATURAL — viscera analysis only conducted for unnatural/suspicious deaths"
-                }
-            },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "NewspaperCutting": {
-            "_bucket": 3,
-            "_format": "Fully unstructured — no fixed format, supplementary evidence only",
-            "_note": "Newspaper cuttings are supplementary corroborating evidence. No critical fields — a blurry or incomplete newspaper cutting does not block the claim. Extract only what is clearly readable. Everything else goes to UnmappedFields.",
-            "_required_critical": [],
-            "_required_important": [
-                "Incident.DateOfIncident",
-                "Incident.NatureOfIncident"
-            ],
-            "document_id": "",
-            "document_type": "NewspaperCutting",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "Publication": {
-                    "NewspaperName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PublicationDate": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Edition": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "City/region edition if mentioned"
-                    },
-                    "Language": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PageNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Article": {
-                    "Headline": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ReporterName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Deceased": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Incident": {
-                    "DateOfIncident": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Location": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "NatureOfIncident": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "RoadAccident",
-                            "RailAccident",
-                            "AirAccident",
-                            "Murder",
-                            "Suicide",
-                            "Drowning",
-                            "Fall",
-                            "Electrocution",
-                            "Burns",
-                            "Poisoning",
-                            "Other"
-                        ]
-                    },
-                    "VehicleNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "OtherPersonsInvolved": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": "UNNATURAL",
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "Always UNNATURAL — newspaper cuttings submitted only for unnatural death claims"
-                }
-            },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        }
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
     }
 }

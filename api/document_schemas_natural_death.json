@@ -1,131 +1,314 @@
 {
-    "_comment": "=================================================================",
-    "_comment2": "BUCKET 1 — ICICI Prudential's OWN forms (fixed format, full schema)",
-    "_comment3": "  1. Medical Attendant / Hospital Certificate (Format AI)",
-    "_comment4": "  2. Employer Certificate (Format AJ)",
-    "_comment5": "BUCKET 2 — Semi-structured govt/hospital docs (target extraction)",
-    "_comment6": "  3. Medico-legal / Medical Cause of Death Certificate",
-    "_comment7": "  4. Discharge Summary",
-    "_comment8": "  5. Admission Form",
-    "_comment9": "  6. Indoor Case Papers (ICPs)",
-    "_comment10": "BUCKET 3 — Fully variable (facts-only extraction)",
-    "_comment11": "  7. Diagnostic Test Reports (Lab / USG / Pathology)",
-    "_comment12": "  8. Past Medical Records & Treatment Papers",
-    "_comment13": "=================================================================",
-    "schemas": {
-        "MedicalAttendantHospitalCertificate": {
-            "_bucket": 1,
-            "_format": "ICICI Pru Format AI — fixed form, full schema",
-            "_note": "Both pages of the form are captured here",
-            "document_id": "",
-            "document_type": "MedicalAttendantHospitalCertificate",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "PolicyNumber": {
+    "MedicalAttendantHospitalCertificate": {
+        "document_id": "",
+        "document_type": "MedicalAttendantHospitalCertificate",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "PolicyNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "CertificateDate": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "LifeAssured": {
+                "Name": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "CertificateDate": {
+                "DateOfBirth": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "LifeAssured": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DateOfBirth": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FatherName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
+                "FatherName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 },
-                "ReferringDoctor": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 },
-                "Hospitalization": {
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "ReferringDoctor": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Hospitalization": {
+                "PatientType": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null,
+                    "_enum": [
+                        "InPatient",
+                        "OutPatient"
+                    ]
+                },
+                "DateOfAdmissionOrConsultation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DateOfDischargeOrDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ConditionAtDischarge": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "FollowUpAdvice": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "TreatmentGiven": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DurationOfTreatment": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "History": {
+                "IllnessOrSymptoms": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DurationOrSinceWhen": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ReasonForSeekingTreatment": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "HistoryProvidedBy": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null,
+                    "_enum": [
+                        "PatientHimself",
+                        "FamilyMember",
+                        "Other"
+                    ]
+                },
+                "HistoryRecordedBy": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Lifestyle": {
+                "SmokingDuration": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SmokingQuantity": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DrinkingDuration": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DrinkingQuantity": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Diagnosis": {
+                "DiagnosingDoctorName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DiagnosingDoctorAddress": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DiagnosingDoctorContact": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DateOfProvisionalDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ProvisionalDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DateOfFinalDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "FinalDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "TestsDoneAndResults": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathDetails": {
+                "PrimaryCauseOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SecondaryCauseOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SymptomsBeforeDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DurationOfSymptoms": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "CausesAscertainedBy": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null,
+                    "_enum": [
+                        "ExaminationAfterDeath",
+                        "SymptomsAndAppearancesDuringLife"
+                    ]
+                },
+                "PostMortemRecommended": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PostMortemReason": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "PreviousTreatmentHistory": [
+                {
                     "PatientType": {
                         "value": null,
                         "ocr_confidence": null,
                         "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "InPatient",
-                            "OutPatient"
-                        ]
+                        "source_text": null
                     },
-                    "DateOfAdmissionOrConsultation": {
+                    "DateFrom": {
                         "value": null,
                         "ocr_confidence": null,
                         "extraction_confidence": null,
                         "source_text": null
                     },
-                    "DateOfDischargeOrDeath": {
+                    "DateTo": {
                         "value": null,
                         "ocr_confidence": null,
                         "extraction_confidence": null,
                         "source_text": null
                     },
-                    "ConditionAtDischarge": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FollowUpAdvice": {
+                    "ReasonForTreatment": {
                         "value": null,
                         "ocr_confidence": null,
                         "extraction_confidence": null,
@@ -136,1707 +319,1468 @@
                         "ocr_confidence": null,
                         "extraction_confidence": null,
                         "source_text": null
-                    },
-                    "DurationOfTreatment": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
                     }
-                },
-                "History": {
-                    "IllnessOrSymptoms": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DurationOrSinceWhen": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ReasonForSeekingTreatment": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "HistoryProvidedBy": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "PatientHimself",
-                            "FamilyMember",
-                            "Other"
-                        ]
-                    },
-                    "HistoryRecordedBy": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Lifestyle": {
-                    "SmokingDuration": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SmokingQuantity": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DrinkingDuration": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DrinkingQuantity": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Diagnosis": {
-                    "DiagnosingDoctorName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DiagnosingDoctorAddress": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DiagnosingDoctorContact": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DateOfProvisionalDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ProvisionalDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DateOfFinalDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FinalDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "TestsDoneAndResults": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathDetails": {
-                    "PrimaryCauseOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SecondaryCauseOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SymptomsBeforeDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DurationOfSymptoms": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "CausesAscertainedBy": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "ExaminationAfterDeath",
-                            "SymptomsAndAppearancesDuringLife"
-                        ]
-                    },
-                    "PostMortemRecommended": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PostMortemReason": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "PreviousTreatmentHistory": [
-                    {
-                        "_comment": "Array — one entry per prior hospitalization episode",
-                        "PatientType": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "DateFrom": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "DateTo": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "ReasonForTreatment": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "TreatmentGiven": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        }
-                    }
-                ],
-                "AttendingDoctor": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignedAt": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignedDate": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Hospital": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "StampPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "NATURAL_OR_MEDICAL",
-                        "UNNATURAL",
-                        null
-                    ]
                 }
-            },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "EmployerCertificate": {
-            "_bucket": 1,
-            "_format": "ICICI Pru Format AJ — fixed form, full schema",
-            "document_id": "",
-            "document_type": "EmployerCertificate",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "PolicyNumber": {
+            ],
+            "AttendingDoctor": {
+                "Name": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "CertificateDate": {
+                "SignedAt": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "LifeAssured": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "EmployeeNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "AgeOnLastWorkingDay": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Designation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "EmploymentType": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "Temporary",
-                            "Permanent"
-                        ]
-                    },
-                    "NatureOfWork": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "Manual",
-                            "Skilled",
-                            "Unskilled",
-                            "Technical",
-                            "Clerical",
-                            "Supervisory",
-                            "Managerial",
-                            "Other"
-                        ]
-                    },
-                    "NatureOfWorkOther": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "JoiningDate": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DateOfConfirmation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "LastWorkingDate": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ReasonForDiscontinuation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "SickLeaveHistory": [
-                    {
-                        "_comment": "Array — one entry per sick leave period in last 5 years",
-                        "DateFrom": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "DateTo": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "ReasonAsPerMedicalCertificate": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        }
-                    }
-                ],
-                "MedicalBenefitsClaimed": [
-                    {
-                        "_comment": "Array — one entry per medical benefit availed",
-                        "BenefitSchemeName": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "AmountClaimed": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "NatureOfTreatmentOrIllness": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "DateOfClaim": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        }
-                    }
-                ],
-                "PreEmploymentMedicalCheckup": {
-                    "Conducted": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ReportsCopyAttached": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "PeriodicHealthCheckupLast5Years": {
-                    "Conducted": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ReportsCopyAttached": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "GroupInsurancePolicies": [
-                    {
-                        "_comment": "Array — insurance policies with premium deducted from salary",
-                        "InsuranceCompanyName": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "PolicyNumber": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "SumAssured": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "RidersOpted": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "CommencementDate": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        },
-                        "PremiumAmount": {
-                            "value": null,
-                            "ocr_confidence": null,
-                            "extraction_confidence": null,
-                            "source_text": null
-                        }
-                    }
-                ],
-                "AuthorizedSignatory": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Designation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignedAt": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignedDate": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Employer": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "StampPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                }
-            },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "MedicoLegalCauseOfDeathCertificate": {
-            "_bucket": 2,
-            "_format": "Semi-structured — government/hospital issued, target extraction",
-            "_note": "Also called Form 4 / Form 4A under RBD Act. Format varies by state but core fields are consistent.",
-            "document_id": "",
-            "document_type": "MedicoLegalCauseOfDeathCertificate",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "CertificateNumber": {
+                "SignedDate": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "FormNumber": {
+                "SignaturePresent": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
-                    "source_text": null,
-                    "_note": "e.g. Form 4, Form 4A"
-                },
-                "DateOfIssue": {
+                    "source_text": null
+                }
+            },
+            "Hospital": {
+                "Name": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null
                 },
-                "Deceased": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DateOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "TimeOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PlaceOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "CauseOfDeath": {
-                    "ImmediateCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Part I(a) — disease/condition directly causing death"
-                    },
-                    "AntecedentCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Part I(b) — disease that caused immediate cause"
-                    },
-                    "UnderlyingCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Part I(c) — root underlying disease"
-                    },
-                    "ContributoryConditions": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Part II — other conditions not directly causing death"
-                    },
-                    "DurationOfImmediateCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "MannerOfDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "Natural",
-                            "Accident",
-                            "Suicide",
-                            "Homicide",
-                            "Undetermined"
-                        ]
-                    }
-                },
-                "IssuingDoctor": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Qualification": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Designation": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Hospital": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "City": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SealPresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
+                "Address": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "NATURAL_OR_MEDICAL",
-                        "UNNATURAL",
-                        null
-                    ]
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "StampPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 }
             },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
+            "DeathCategory": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "NATURAL_OR_MEDICAL",
+                    "UNNATURAL",
+                    null
+                ]
+            }
         },
-        "DischargeSummary": {
-            "_bucket": 2,
-            "_format": "Semi-structured — hospital issued, format varies, target extraction",
-            "document_id": "",
-            "document_type": "DischargeSummary",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "Hospital": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "City": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Patient": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "IPDNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Inpatient Department registration number"
-                    },
-                    "UHIDNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Unique Health ID if present"
-                    },
-                    "WardOrBed": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ReferredBy": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Admission": {
-                    "DateOfAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "TimeOfAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ModeOfAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "Emergency",
-                            "Planned",
-                            "Transferred"
-                        ]
-                    },
-                    "AdmittingDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Discharge": {
-                    "DateOfDischargeOrDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "TimeOfDischargeOrDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DischargeType": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "Discharged",
-                            "DAMA",
-                            "ExpiredInHospital",
-                            "Transferred"
-                        ]
-                    },
-                    "ConditionAtDischarge": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "FollowUpAdvice": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Diagnosis": {
-                    "PrimaryDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SecondaryDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ICDCode": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Comorbidities": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Pre-existing conditions mentioned — critical for claim"
-                    },
-                    "SurgeriesOrProcedures": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "CauseOfDeath": {
-                    "ImmediateCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "UnderlyingCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "TreatingTeam": {
-                    "PrimaryDoctorName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PrimaryDoctorRegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ConsultantNames": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "NATURAL_OR_MEDICAL",
-                        "UNNATURAL",
-                        null
-                    ]
-                }
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "EmployerCertificate": {
+        "document_id": "",
+        "document_type": "EmployerCertificate",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "PolicyNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
             },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "AdmissionForm": {
-            "_bucket": 2,
-            "_format": "Semi-structured — hospital issued, format varies, target extraction",
-            "document_id": "",
-            "document_type": "AdmissionForm",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "Hospital": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "City": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Patient": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DateOfBirth": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "BloodGroup": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "IPDOrOPDNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Attendant": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Relationship": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Admission": {
-                    "DateOfAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "TimeOfAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ModeOfAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "Emergency",
-                            "Planned",
-                            "Transferred"
-                        ]
-                    },
-                    "AdmittingDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "AdmittingDoctorName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Ward": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ReferredBy": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "NATURAL_OR_MEDICAL",
-                        "UNNATURAL",
-                        null
-                    ]
-                }
+            "CertificateDate": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
             },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "IndoorCasePapers": {
-            "_bucket": 2,
-            "_format": "Semi-structured — hospital inpatient record, multi-page, target extraction",
-            "_note": "ICPs are the most information-rich document. Extract all pre-existing conditions carefully — critical for claim verification.",
-            "document_id": "",
-            "document_type": "IndoorCasePapers",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "Hospital": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "City": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "State": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
+            "LifeAssured": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 },
-                "Patient": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DateOfBirth": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "IPDNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "WardOrBed": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
+                "EmployeeNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 },
-                "Admission": {
-                    "DateOfAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "AdmittingDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ModeOfAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
+                "AgeOnLastWorkingDay": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 },
-                "Outcome": {
-                    "DateOfDischargeOrDeath": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "OutcomeType": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_enum": [
-                            "Discharged",
-                            "DAMA",
-                            "ExpiredInHospital",
-                            "Transferred"
-                        ]
-                    }
+                "Designation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 },
-                "ClinicalFindings": {
-                    "PrimaryDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SecondaryDiagnosis": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Comorbidities": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "CRITICAL — any pre-existing conditions mentioned anywhere in ICPs"
-                    },
-                    "PastMedicalHistoryMentioned": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Any history of prior illness mentioned by treating team"
-                    },
-                    "SurgeriesOrProcedures": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ICUAdmission": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "VentilatorUsed": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "CauseOfDeath": {
-                    "ImmediateCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "UnderlyingCause": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "TreatingTeam": {
-                    "PrimaryDoctorName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PrimaryDoctorRegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
+                "EmploymentType": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null,
                     "_enum": [
-                        "NATURAL_OR_MEDICAL",
-                        "UNNATURAL",
-                        null
+                        "Temporary",
+                        "Permanent"
                     ]
-                }
-            },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        },
-        "DiagnosticTestReport": {
-            "_bucket": 3,
-            "_format": "Variable — lab/USG/pathology reports vary by centre, facts-only extraction",
-            "_note": "Do not attempt to extract every test value. Extract only metadata and findings relevant to cause of death.",
-            "document_id": "",
-            "document_type": "DiagnosticTestReport",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "ReportSubtype": {
+                },
+                "NatureOfWork": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null,
                     "_enum": [
-                        "Pathology",
-                        "USG",
-                        "ECG",
-                        "Xray",
-                        "MRI",
-                        "CT",
-                        "BloodReport",
-                        "BiopsyReport",
+                        "Manual",
+                        "Skilled",
+                        "Unskilled",
+                        "Technical",
+                        "Clerical",
+                        "Supervisory",
+                        "Managerial",
                         "Other"
                     ]
                 },
-                "Lab": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Address": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ContactNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "RegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Patient": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SampleId": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Report": {
-                    "ReportDate": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SampleCollectionDate": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "ReferringDoctorName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "TestsPerformed": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Array of test names"
-                    },
-                    "AbnormalFindings": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "ONLY extract abnormal or flagged values — not all test results"
-                    },
-                    "Conclusion": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Doctor/pathologist conclusion if present"
-                    },
-                    "PathologistName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "PathologistRegistrationNumber": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "SignaturePresent": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "DeathCategory": {
+                "NatureOfWorkOther": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "NATURAL_OR_MEDICAL",
-                        "UNNATURAL",
-                        null
-                    ]
+                    "source_text": null
+                },
+                "JoiningDate": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DateOfConfirmation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "LastWorkingDate": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ReasonForDiscontinuation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
                 }
             },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
+            "SickLeaveHistory": [
+                {
+                    "DateFrom": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "DateTo": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "ReasonAsPerMedicalCertificate": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    }
+                }
+            ],
+            "MedicalBenefitsClaimed": [
+                {
+                    "BenefitSchemeName": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "AmountClaimed": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "NatureOfTreatmentOrIllness": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "DateOfClaim": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    }
+                }
+            ],
+            "PreEmploymentMedicalCheckup": {
+                "Conducted": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ReportsCopyAttached": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "PeriodicHealthCheckupLast5Years": {
+                "Conducted": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ReportsCopyAttached": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "GroupInsurancePolicies": [
+                {
+                    "InsuranceCompanyName": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "PolicyNumber": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "SumAssured": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "RidersOpted": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "CommencementDate": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    },
+                    "PremiumAmount": {
+                        "value": null,
+                        "ocr_confidence": null,
+                        "extraction_confidence": null,
+                        "source_text": null
+                    }
+                }
+            ],
+            "AuthorizedSignatory": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Designation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignedAt": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignedDate": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Employer": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "StampPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            }
         },
-        "PastMedicalRecordsAndTreatmentPapers": {
-            "_bucket": 3,
-            "_format": "Fully variable — prescriptions, OPD slips, old reports, facts-only",
-            "_note": "These are catch-all documents. Do not enforce structure. Extract only identity confirmation and any pre-existing conditions. Everything else goes to UnmappedFields.",
-            "document_id": "",
-            "document_type": "PastMedicalRecordsAndTreatmentPapers",
-            "file_name": "",
-            "uploaded_by": "",
-            "uploaded_at": "",
-            "ocr_confidence": 0.0,
-            "trust_score": 0.0,
-            "document_language": "",
-            "pages": 0,
-            "is_handwritten": false,
-            "is_blurry": false,
-            "is_tampered": false,
-            "verification_status": "",
-            "validation_flags": [],
-            "extracted_entities": {
-                "RecordSubtype": {
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "MedicoLegalCauseOfDeathCertificate": {
+        "document_id": "",
+        "document_type": "MedicoLegalCauseOfDeathCertificate",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "CertificateNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "FormNumber": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "DateOfIssue": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null
+            },
+            "Deceased": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DateOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "TimeOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PlaceOfDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "CauseOfDeath": {
+                "ImmediateCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "AntecedentCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "UnderlyingCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContributoryConditions": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DurationOfImmediateCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "MannerOfDeath": {
                     "value": null,
                     "ocr_confidence": null,
                     "extraction_confidence": null,
                     "source_text": null,
                     "_enum": [
-                        "Prescription",
-                        "OPDSlip",
-                        "OldLabReport",
-                        "DischargeSummary",
-                        "ConsultationNote",
-                        "Other"
-                    ]
-                },
-                "Patient": {
-                    "Name": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Age": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "Gender": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    }
-                },
-                "Record": {
-                    "RecordDate": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DoctorOrHospitalName": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null
-                    },
-                    "DiagnosisOrConditionMentioned": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "CRITICAL — any diagnosis or condition. Pre-existing disease history is key for claim."
-                    },
-                    "MedicationsMentioned": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Medication names can reveal undisclosed conditions"
-                    },
-                    "RelationToCurrentClaim": {
-                        "value": null,
-                        "ocr_confidence": null,
-                        "extraction_confidence": null,
-                        "source_text": null,
-                        "_note": "Model assessment: is this record related to cause of death?"
-                    }
-                },
-                "DeathCategory": {
-                    "value": null,
-                    "ocr_confidence": null,
-                    "extraction_confidence": null,
-                    "source_text": null,
-                    "_enum": [
-                        "NATURAL_OR_MEDICAL",
-                        "UNNATURAL",
-                        null
+                        "Natural",
+                        "Accident",
+                        "Suicide",
+                        "Homicide",
+                        "Undetermined"
                     ]
                 }
             },
-            "LowConfidenceFields": [],
-            "UnmappedFields": []
-        }
+            "IssuingDoctor": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Qualification": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Designation": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Hospital": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "City": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SealPresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "NATURAL_OR_MEDICAL",
+                    "UNNATURAL",
+                    null
+                ]
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "DischargeSummary": {
+        "document_id": "",
+        "document_type": "DischargeSummary",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "Hospital": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "City": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Patient": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "IPDNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "UHIDNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "WardOrBed": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ReferredBy": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Admission": {
+                "DateOfAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "TimeOfAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ModeOfAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null,
+                    "_enum": [
+                        "Emergency",
+                        "Planned",
+                        "Transferred"
+                    ]
+                },
+                "AdmittingDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Discharge": {
+                "DateOfDischargeOrDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "TimeOfDischargeOrDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DischargeType": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null,
+                    "_enum": [
+                        "Discharged",
+                        "DAMA",
+                        "ExpiredInHospital",
+                        "Transferred"
+                    ]
+                },
+                "ConditionAtDischarge": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "FollowUpAdvice": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Diagnosis": {
+                "PrimaryDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SecondaryDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ICDCode": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Comorbidities": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SurgeriesOrProcedures": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "CauseOfDeath": {
+                "ImmediateCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "UnderlyingCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "TreatingTeam": {
+                "PrimaryDoctorName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PrimaryDoctorRegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ConsultantNames": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "NATURAL_OR_MEDICAL",
+                    "UNNATURAL",
+                    null
+                ]
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "AdmissionForm": {
+        "document_id": "",
+        "document_type": "AdmissionForm",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "Hospital": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "City": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Patient": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DateOfBirth": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "BloodGroup": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "IPDOrOPDNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Attendant": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Relationship": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Admission": {
+                "DateOfAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "TimeOfAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ModeOfAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null,
+                    "_enum": [
+                        "Emergency",
+                        "Planned",
+                        "Transferred"
+                    ]
+                },
+                "AdmittingDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "AdmittingDoctorName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Ward": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ReferredBy": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "NATURAL_OR_MEDICAL",
+                    "UNNATURAL",
+                    null
+                ]
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "IndoorCasePapers": {
+        "document_id": "",
+        "document_type": "IndoorCasePapers",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "Hospital": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "City": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "State": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Patient": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DateOfBirth": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "IPDNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "WardOrBed": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Admission": {
+                "DateOfAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "AdmittingDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ModeOfAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Outcome": {
+                "DateOfDischargeOrDeath": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "OutcomeType": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null,
+                    "_enum": [
+                        "Discharged",
+                        "DAMA",
+                        "ExpiredInHospital",
+                        "Transferred"
+                    ]
+                }
+            },
+            "ClinicalFindings": {
+                "PrimaryDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SecondaryDiagnosis": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Comorbidities": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PastMedicalHistoryMentioned": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SurgeriesOrProcedures": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ICUAdmission": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "VentilatorUsed": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "CauseOfDeath": {
+                "ImmediateCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "UnderlyingCause": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "TreatingTeam": {
+                "PrimaryDoctorName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PrimaryDoctorRegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "NATURAL_OR_MEDICAL",
+                    "UNNATURAL",
+                    null
+                ]
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "DiagnosticTestReport": {
+        "document_id": "",
+        "document_type": "DiagnosticTestReport",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "ReportSubtype": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "Pathology",
+                    "USG",
+                    "ECG",
+                    "Xray",
+                    "MRI",
+                    "CT",
+                    "BloodReport",
+                    "BiopsyReport",
+                    "Other"
+                ]
+            },
+            "Lab": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Address": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ContactNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Patient": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SampleId": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Report": {
+                "ReportDate": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SampleCollectionDate": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "ReferringDoctorName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "TestsPerformed": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "AbnormalFindings": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Conclusion": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PathologistName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "PathologistRegistrationNumber": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "SignaturePresent": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "NATURAL_OR_MEDICAL",
+                    "UNNATURAL",
+                    null
+                ]
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
+    },
+    "PastMedicalRecordsAndTreatmentPapers": {
+        "document_id": "",
+        "document_type": "PastMedicalRecordsAndTreatmentPapers",
+        "file_name": "",
+        "uploaded_by": "",
+        "uploaded_at": "",
+        "ocr_confidence": 0.0,
+        "trust_score": 0.0,
+        "document_language": "",
+        "pages": 0,
+        "is_handwritten": false,
+        "is_blurry": false,
+        "is_tampered": false,
+        "verification_status": "",
+        "validation_flags": [],
+        "extracted_entities": {
+            "RecordSubtype": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "Prescription",
+                    "OPDSlip",
+                    "OldLabReport",
+                    "DischargeSummary",
+                    "ConsultationNote",
+                    "Other"
+                ]
+            },
+            "Patient": {
+                "Name": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Age": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "Gender": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "Record": {
+                "RecordDate": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DoctorOrHospitalName": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "DiagnosisOrConditionMentioned": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "MedicationsMentioned": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                },
+                "RelationToCurrentClaim": {
+                    "value": null,
+                    "ocr_confidence": null,
+                    "extraction_confidence": null,
+                    "source_text": null
+                }
+            },
+            "DeathCategory": {
+                "value": null,
+                "ocr_confidence": null,
+                "extraction_confidence": null,
+                "source_text": null,
+                "_enum": [
+                    "NATURAL_OR_MEDICAL",
+                    "UNNATURAL",
+                    null
+                ]
+            }
+        },
+        "LowConfidenceFields": [],
+        "UnmappedFields": []
     }
 }

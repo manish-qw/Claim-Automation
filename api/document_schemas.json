@@ -1,5 +1,19 @@
 {
   "ClaimantStatementForm": {
+    "document_id": "",
+    "document_type": "ClaimantStatementForm",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0.0,
+    "trust_score": 0.0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": false,
+    "is_blurry": false,
+    "is_tampered": false,
+    "verification_status": "",
+    "validation_flags": [],
     "DocumentType": "ClaimantStatementForm",
     "LifeAssured": {
       "Name": {},
@@ -144,9 +158,24 @@
       "LanguageExplainedIn": {}
     },
     "AdditionalRemarks": [],
+    "LowConfidenceFields": [],
     "UnmappedFields": []
   },
   "DeathCertificate": {
+    "document_id": "",
+    "document_type": "DeathCertificate",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0.0,
+    "trust_score": 0.0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": false,
+    "is_blurry": false,
+    "is_tampered": false,
+    "verification_status": "",
+    "validation_flags": [],
     "DocumentType": "DeathCertificate",
     "Deceased": {
       "Name": {},
@@ -219,9 +248,24 @@
       "DigitalCertificate": {}
     },
     "AdditionalRemarks": [],
+    "LowConfidenceFields": [],
     "UnmappedFields": []
   },
   "AadhaarCard": {
+    "document_id": "",
+    "document_type": "AadhaarCard",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0.0,
+    "trust_score": 0.0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": false,
+    "is_blurry": false,
+    "is_tampered": false,
+    "verification_status": "",
+    "validation_flags": [],
     "DocumentType": "AadhaarCard",
     "Person": {
       "FullName": {},
@@ -269,9 +313,24 @@
       "AadhaarType": {}
     },
     "AdditionalRemarks": [],
+    "LowConfidenceFields": [],
     "UnmappedFields": []
   },
   "Passport": {
+    "document_id": "",
+    "document_type": "Passport",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0.0,
+    "trust_score": 0.0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": false,
+    "is_blurry": false,
+    "is_tampered": false,
+    "verification_status": "",
+    "validation_flags": [],
     "DocumentType": "Passport",
     "Person": {
       "FullName": {},
@@ -321,9 +380,24 @@
       "MRZLine2": {}
     },
     "AdditionalRemarks": [],
+    "LowConfidenceFields": [],
     "UnmappedFields": []
   },
   "DrivingLicence": {
+    "document_id": "",
+    "document_type": "DrivingLicence",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0.0,
+    "trust_score": 0.0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": false,
+    "is_blurry": false,
+    "is_tampered": false,
+    "verification_status": "",
+    "validation_flags": [],
     "DocumentType": "DrivingLicence",
     "Person": {
       "FullName": {},
@@ -383,9 +457,24 @@
       "MobileNumber": {}
     },
     "AdditionalRemarks": [],
+    "LowConfidenceFields": [],
     "UnmappedFields": []
   },
   "VoterID": {
+    "document_id": "",
+    "document_type": "VoterID",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0.0,
+    "trust_score": 0.0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": false,
+    "is_blurry": false,
+    "is_tampered": false,
+    "verification_status": "",
+    "validation_flags": [],
     "DocumentType": "VoterID",
     "Person": {
       "FullName": {},
@@ -438,9 +527,24 @@
       "Language": {}
     },
     "AdditionalRemarks": [],
+    "LowConfidenceFields": [],
     "UnmappedFields": []
   },
   "PANCard": {
+    "document_id": "",
+    "document_type": "PANCard",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0.0,
+    "trust_score": 0.0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": false,
+    "is_blurry": false,
+    "is_tampered": false,
+    "verification_status": "",
+    "validation_flags": [],
     "DocumentType": "PANCard",
     "Person": {
       "FullName": {},
@@ -466,9 +570,24 @@
       "DigitalPAN": {}
     },
     "AdditionalRemarks": [],
+    "LowConfidenceFields": [],
     "UnmappedFields": []
   },
   "BankProof": {
+    "document_id": "",
+    "document_type": "BankProof",
+    "file_name": "",
+    "uploaded_by": "",
+    "uploaded_at": "",
+    "ocr_confidence": 0.0,
+    "trust_score": 0.0,
+    "document_language": "",
+    "pages": 0,
+    "is_handwritten": false,
+    "is_blurry": false,
+    "is_tampered": false,
+    "verification_status": "",
+    "validation_flags": [],
     "DocumentType": "BankProof",
     "Bank": {
       "AccountHolderName": {},
@@ -480,6 +599,7 @@
       "AccountType": {}
     },
     "AdditionalRemarks": [],
+    "LowConfidenceFields": [],
     "UnmappedFields": []
   }
 }
