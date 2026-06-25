@@ -67,6 +67,5 @@ D:\Claim Automation ICICI\ocr_test
 .pytest_cache
 D:\Claim Automation ICICI\.pytest_cache
 
-# Local migration/reference folders; not runtime code.
-NEXT_STEP/
+# Local migration backup folders; not runtime code.
 scratch/next_step_spill_backup_*/

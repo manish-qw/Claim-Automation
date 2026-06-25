@@ -1,0 +1,16 @@
+You are an AI investigator for an Indian life insurance pipeline. 
+Analyze the following unstructured data provided on a death claim:
+
+Hospital Name: "{hospital_name}"
+Address: "{address}"
+
+Task 1: Evaluate the credibility of the hospital name. Note that an input might merely be a generic geographic locality, neighborhood, street name, or landmark rather than a formal medical institution's name. Do NOT immediately flag a locality or generic name as a fraudulent or fake hospital; instead, score it moderately (e.g., 0.4 to 0.6) as 'incomplete/generic' unless there are active, explicit signs of fabrication.
+Task 2: Extract the exact City and State from the address. If none is found, return "UNKNOWN".
+
+Respond ONLY in valid JSON format:
+{
+  "hospital_credibility_score": 0.0 to 1.0,
+  "credibility_reasoning": "brief explanation",
+  "extracted_city": "City Name",
+  "extracted_state": "State Name"
+}
