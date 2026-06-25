@@ -20,6 +20,7 @@ import re
 import httpx
 from openai import OpenAI
 from api.face_verification import (
+    is_face_status_terminal,
     run_stage1_face_verification,
     should_run_stage1_face_verification,
 )
@@ -71,6 +72,137 @@ DOC_TYPE_MAPPING = {
     "NEWSPAPER_CUTTING": "NewspaperCutting",
     "DRIVING_LICENCE_STEP2": "DrivingLicence"
 }
+
+DOC_TYPE_CANONICAL_ALIASES: Dict[str, str] = {
+    "DEATHCERTIFICATE": "DEATH_CERTIFICATE",
+    "CLAIMANTSTATEMENTFORM": "CLAIMANT_STATEMENT_FORM",
+    "AADHAARCARD": "AADHAAR_CARD",
+    "AADHARCARD": "AADHAAR_CARD",
+    "PASSPORT": "PASSPORT",
+    "DRIVINGLICENCE": "DRIVING_LICENCE",
+    "DRIVINGLICENSE": "DRIVING_LICENCE",
+    "VOTERID": "VOTER_ID",
+    "PANCARD": "PAN_CARD",
+    "BANKPROOF": "BANK_PROOF",
+    "MEDICOLEGALCERT": "MEDICO_LEGAL_CERT",
+    "HOSPITALIZATIONRECORDS": "HOSPITALIZATION_RECORDS",
+    "TREATINGDOCTORCERT": "TREATING_DOCTOR_CERT",
+    "HOSPITALATTENDANTCERT": "HOSPITAL_ATTENDANT_CERT",
+    "EMPLOYERCERT": "EMPLOYER_CERT",
+    "FIR": "FIR",
+    "INQUESTREPORT": "INQUEST_REPORT",
+    "FINALPOLICEREPORT": "FINAL_POLICE_REPORT",
+    "POSTMORTEMREPORT": "POSTMORTEM_REPORT",
+    "VISCERAREPORT": "VISCERA_REPORT",
+    "NEWSPAPERCUTTING": "NEWSPAPER_CUTTING",
+    "CLAIMANTRECENTPHOTOGRAPH": "CLAIMANT_RECENT_PHOTOGRAPH",
+}
+
+STAGE1_INTERNAL_DOC_TYPES = {
+    "CLAIMANT_STATEMENT_FORM",
+    "DEATH_CERTIFICATE",
+    "AADHAAR_CARD",
+    "PASSPORT",
+    "DRIVING_LICENCE",
+    "VOTER_ID",
+    "PAN_CARD",
+    "BANK_PROOF",
+    "IDENTITY_PROOF",
+    "ADDRESS_PROOF",
+}
+
+STAGE2_INTERNAL_DOC_TYPES = {
+    "MEDICO_LEGAL_CERT",
+    "HOSPITALIZATION_RECORDS",
+    "TREATING_DOCTOR_CERT",
+    "HOSPITAL_ATTENDANT_CERT",
+    "EMPLOYER_CERT",
+    "FIR",
+    "INQUEST_REPORT",
+    "FINAL_POLICE_REPORT",
+    "POSTMORTEM_REPORT",
+    "VISCERA_REPORT",
+    "NEWSPAPER_CUTTING",
+    "DRIVING_LICENCE_STEP2",
+}
+
+STAGE2_NATURAL_DOC_TYPES = {
+    "medical_attendant_hospital_certificate",
+    "employer_certificate",
+    "medico_legal_cause_of_death_certificate",
+    "discharge_summary",
+    "admission_form",
+    "indoor_case_papers",
+    "diagnostic_test_report",
+    "past_medical_records_and_treatment_papers",
+}
+
+STAGE2_UNNATURAL_DOC_TYPES = {
+    "first_information_report",
+    "inquest_panchanana_report",
+    "final_police_investigation_report",
+    "postmortem_report",
+    "viscera_chemical_examination_report",
+    "newspaper_cutting",
+}
+
+
+def _normalize_doc_type_token(value: Any) -> str:
+    token = str(value or "").strip()
+    if not token:
+        return ""
+    return re.sub(r"[^A-Za-z0-9]+", "", token).upper()
+
+
+def canonicalize_doc_type(value: Any) -> str:
+    raw = str(value or "").strip()
+    if not raw:
+        return ""
+    if raw in DOC_TYPE_MAPPING or raw in FACE_ONLY_DOC_TYPES:
+        return raw
+
+    upper = raw.upper()
+    normalized_sep = re.sub(r"[\s\-]+", "_", upper)
+    if normalized_sep in DOC_TYPE_MAPPING or normalized_sep in FACE_ONLY_DOC_TYPES:
+        return normalized_sep
+
+    flattened = _normalize_doc_type_token(raw)
+    if flattened in DOC_TYPE_CANONICAL_ALIASES:
+        return DOC_TYPE_CANONICAL_ALIASES[flattened]
+
+    # Allow schema-style names (e.g. DeathCertificate, PanCard)
+    for internal_key, schema_name in DOC_TYPE_MAPPING.items():
+        if _normalize_doc_type_token(schema_name) == flattened:
+            return internal_key
+
+    return raw
+
+
+def normalize_doc_type_list(values: List[str]) -> List[str]:
+    expanded: List[str] = []
+    for item in values:
+        if item is None:
+            continue
+        text = str(item).strip()
+        if not text:
+            continue
+        # Swagger sometimes sends list as one CSV field: "DeathCertificate,PanCard"
+        if "," in text:
+            parts = [part.strip() for part in text.split(",") if part.strip()]
+            expanded.extend(parts)
+        else:
+            expanded.append(text)
+    return [canonicalize_doc_type(item) for item in expanded]
+
+
+def is_stage1_internal_doc_type(value: Any) -> bool:
+    doc_type = canonicalize_doc_type(value)
+    return doc_type in STAGE1_INTERNAL_DOC_TYPES
+
+
+def is_stage2_internal_doc_type(value: Any) -> bool:
+    doc_type = canonicalize_doc_type(value)
+    return doc_type in STAGE2_INTERNAL_DOC_TYPES
 
 CLASSIFIER_PROMPT_TEMPLATE = """You are a document classifier. 
 Given this OCR text, identify what type of document this is.
@@ -471,11 +603,15 @@ def fast_classify_identity_document(ocr_text: str) -> Optional[Dict[str, Any]]:
         candidates[schema_key]["score"] += points
         candidates[schema_key]["reasons"].append(reason)
 
-    aadhaar_keywords = ["aadhaar", "aadhar", "uidai", "unique identification authority"]
+    aadhaar_keywords = ["aadhaar", "aadhar","uidai","unique identification authority of india", "your aadhaar no","aadhaar no","vid"]
     if any(keyword in compact_lower for keyword in aadhaar_keywords):
         add("AadhaarCard", 4, "aadhaar_keyword")
+    if re.search(r"\bvirtual\s+id\b", compact_lower) or re.search(r"\bvid\b", compact_lower):
+        add("AadhaarCard", 3, "aadhaar_vid_keyword")
     if re.search(r"\b\d{4}\s?\d{4}\s?\d{4}\b", text):
         add("AadhaarCard", 2, "aadhaar_12_digit_pattern")
+    if re.search(r"(virtual\s+id|vid)\D{0,12}\d{4}\s?\d{4}\s?\d{4}\s?\d{4}", compact_lower):
+        add("AadhaarCard", 4, "aadhaar_vid_16_digit_pattern")
 
     pan_keywords = ["permanent account number", "income tax department", "income tax", "pan card"]
     if any(keyword in compact_lower for keyword in pan_keywords):
@@ -543,9 +679,17 @@ SCHEMA_FILES = [
     "document_schemas_natural_death.json",
     "document_schemas_unnatural_death.json",
 ]
+CANONICAL_CROSS_VERIFY_MAP_FILE = os.path.join("api", "cross_verify_field_map.json")
+CANONICAL_CROSS_VERIFY_STAGE2_MAP_FILE = os.path.join("api", "cross_verify_field_map_stage2.json")
 _SCHEMAS_CACHE: Dict[str, Any] = {}
 _SCHEMAS_CACHE_READY = False
 _SCHEMAS_CACHE_LOCK = threading.Lock()
+_CROSS_VERIFY_MAP_CACHE: Dict[str, Any] = {}
+_CROSS_VERIFY_MAP_READY = False
+_CROSS_VERIFY_MAP_LOCK = threading.Lock()
+_CROSS_VERIFY_STAGE2_MAP_CACHE: Dict[str, Any] = {}
+_CROSS_VERIFY_STAGE2_MAP_READY = False
+_CROSS_VERIFY_STAGE2_MAP_LOCK = threading.Lock()
 
 def get_combined_schemas() -> Dict[str, Any]:
     global _SCHEMAS_CACHE_READY, _SCHEMAS_CACHE
@@ -569,6 +713,71 @@ def get_combined_schemas() -> Dict[str, Any]:
         _SCHEMAS_CACHE_READY = True
         print(f"[SCHEMA CACHE] loaded={len(_SCHEMAS_CACHE)}")
         return _SCHEMAS_CACHE
+
+
+def get_canonical_cross_verify_map() -> Dict[str, Any]:
+    global _CROSS_VERIFY_MAP_CACHE, _CROSS_VERIFY_MAP_READY
+    if _CROSS_VERIFY_MAP_READY:
+        return _CROSS_VERIFY_MAP_CACHE
+
+    with _CROSS_VERIFY_MAP_LOCK:
+        if _CROSS_VERIFY_MAP_READY:
+            return _CROSS_VERIFY_MAP_CACHE
+        try:
+            with open(CANONICAL_CROSS_VERIFY_MAP_FILE, "r", encoding="utf-8") as f:
+                loaded = json.load(f)
+            if not isinstance(loaded, dict):
+                loaded = {}
+        except Exception as exc:
+            print(f"[CROSS VERIFY MAP] load_error={exc}")
+            loaded = {}
+        loaded.setdefault("fields", {})
+        loaded.setdefault("documents", {})
+        loaded.setdefault("version", 0)
+        _CROSS_VERIFY_MAP_CACHE = loaded
+        _CROSS_VERIFY_MAP_READY = True
+        print(
+            "[CROSS VERIFY MAP] "
+            f"fields={len(_CROSS_VERIFY_MAP_CACHE.get('fields', {}))} "
+            f"documents={len(_CROSS_VERIFY_MAP_CACHE.get('documents', {}))}"
+        )
+        return _CROSS_VERIFY_MAP_CACHE
+
+
+def get_stage2_cross_verify_map() -> Dict[str, Any]:
+    global _CROSS_VERIFY_STAGE2_MAP_CACHE, _CROSS_VERIFY_STAGE2_MAP_READY
+    if _CROSS_VERIFY_STAGE2_MAP_READY:
+        return _CROSS_VERIFY_STAGE2_MAP_CACHE
+
+    with _CROSS_VERIFY_STAGE2_MAP_LOCK:
+        if _CROSS_VERIFY_STAGE2_MAP_READY:
+            return _CROSS_VERIFY_STAGE2_MAP_CACHE
+        try:
+            with open(CANONICAL_CROSS_VERIFY_STAGE2_MAP_FILE, "r", encoding="utf-8") as f:
+                loaded = json.load(f)
+            if not isinstance(loaded, dict):
+                loaded = {}
+        except Exception as exc:
+            print(f"[CROSS VERIFY STAGE2 MAP] load_error={exc}")
+            loaded = {}
+        loaded.setdefault("natural_death", {})
+        loaded.setdefault("unnatural_death", {})
+        for key in ("natural_death", "unnatural_death"):
+            node = loaded.get(key)
+            if not isinstance(node, dict):
+                node = {}
+                loaded[key] = node
+            node.setdefault("fields", {})
+            node.setdefault("documents", {})
+        loaded.setdefault("version", 0)
+        _CROSS_VERIFY_STAGE2_MAP_CACHE = loaded
+        _CROSS_VERIFY_STAGE2_MAP_READY = True
+        print(
+            "[CROSS VERIFY STAGE2 MAP] "
+            f"natural_docs={len(_CROSS_VERIFY_STAGE2_MAP_CACHE.get('natural_death', {}).get('documents', {}))} "
+            f"unnatural_docs={len(_CROSS_VERIFY_STAGE2_MAP_CACHE.get('unnatural_death', {}).get('documents', {}))}"
+        )
+        return _CROSS_VERIFY_STAGE2_MAP_CACHE
 
 def clone_json_value(value: Any) -> Any:
     try:
@@ -668,6 +877,149 @@ FACE_QUEUE: "queue.Queue[Dict[str, Any]]" = queue.Queue()
 PIPELINE_WORKERS_STARTED = False
 PIPELINE_WORKERS_LOCK = threading.Lock()
 PIPELINE_TERMINAL_STATUSES = {"success", "failed", "validation_error"}
+
+# ---------------------------------------------------------------------------
+# Auto-trigger: Fraud + Policy pipeline runs automatically when a batch
+# completes.  Runs in its own daemon thread — does NOT block the OCR response.
+# ---------------------------------------------------------------------------
+
+# def _run_fraud_and_policy_background(batch_id: str, claim_payload: Dict[str, Any]) -> None:
+#     """Background thread: normalize OCR payload → FraudPipeline → Policy orchestrator."""
+#     try:
+#         import sys, os
+#         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+#         _policy_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'policy_agent'))
+#         if _policy_dir not in sys.path:
+#             sys.path.insert(0, _policy_dir)
+
+#         from fraud_pipeline.utils.ocr_payload_normalizer import normalize_claim_case_payload
+#         from fraud_pipeline.schemas import ClaimState
+#         from fraud_pipeline.pipeline import FraudPipeline
+
+#         print(f"[AUTO-ANALYSIS START] batch={batch_id}")
+
+#         # Stage 1 — normalise OCR payload into ClaimState
+#         normalized = normalize_claim_case_payload(claim_payload)
+#         state = ClaimState(**normalized)
+
+#         # Stage 2 — 7-agent fraud pipeline
+#         package = FraudPipeline().run(state)
+#         fraud_result = package.model_dump()
+#         print(f"[AUTO-ANALYSIS FRAUD DONE] batch={batch_id} recommendation={package.final_recommendation}")
+
+#         # Stage 3 — Policy orchestrator (LangGraph)
+#         policy_result: Dict[str, Any] = {}
+#         try:
+#             from mock_data import get_initial_state   # bare import — policy_dir on sys.path
+#             from orchestrator import app as policy_app
+
+#             # Build policy payload from fraud output
+#             docs_verified = [
+#                 f"{d.doc_type} (ocr_conf: {d.ocr_confidence})"
+#                 for d in state.submitted_documents
+#             ]
+#             fraud_payload = {
+#                 "claim_case_id": package.claim_case_id,
+#                 "status": "success",
+#                 "result": {
+#                     "claim_case_id": package.claim_case_id,
+#                     "claim_profile": {
+#                         "policy_id":                 state.policy_number,
+#                         "claimant_name":             state.claimant.name,
+#                         "life_assured_name":         state.life_assured.name,
+#                         "life_assured_age_at_entry": state.life_assured.age,
+#                         "incident_type":             normalized.get("incident_type", "NATURAL"),
+#                         "incident_date":             state.death_information.date_of_death,
+#                         "cause_of_death":            state.death_information.cause_of_death,
+#                         "death_type":                normalized.get("death_type", "NATURAL"),
+#                         "months_since_inception":    normalized.get("months_since_inception", 0),
+#                         "is_policy_in_force":        normalized.get("is_policy_in_force", True),
+#                         "premium_payment_type":      normalized.get("premium_payment_type", "REGULAR"),
+#                         "sum_assured":               state.policy_sum_assured,
+#                         "annualised_premium":        state.policy_premium,
+#                         "payout_option_chosen":      normalized.get("payout_option_chosen", "LUMP_SUM"),
+#                         "documents_verified":        docs_verified,
+#                         "document_flags":            state.validation_flags,
+#                     },
+#                     "fraud_analysis":          package.fraud_analysis or {},
+#                     "trust_analysis":          package.trust_analysis or {},
+#                     "external_verification":   package.external_verification or {},
+#                     "early_claim_analysis":    package.early_claim_analysis or {},
+#                     "non_disclosure_analysis": package.non_disclosure_analysis or {},
+#                     "conflict_resolution":     package.conflict_resolution or {},
+#                     "graph_analysis":          package.graph_analysis or {},
+#                     "final_recommendation":    package.final_recommendation,
+#                     "escalation_required":     package.escalation_required,
+#                 },
+#             }
+#             initial_state = get_initial_state(fraud_payload=fraud_payload)
+#             final_state = policy_app.invoke(initial_state)
+#             policy_result = {
+#                 "policy_decision_report": final_state.get("claim_decision_report"),
+#                 "policy_final_status":    final_state.get("final_status"),
+#                 "detailed_summary":       final_state.get("detailed_summary"),
+#                 "audit_log":              final_state.get("audit_log", []),
+#             }
+#             print(f"[AUTO-ANALYSIS POLICY DONE] batch={batch_id} status={policy_result.get('policy_final_status')}")
+#         except Exception as policy_exc:
+#             print(f"[AUTO-ANALYSIS POLICY ERROR] batch={batch_id} error={policy_exc}")
+#             policy_result = {"error": str(policy_exc), "policy_final_status": "ERROR"}
+
+#         # Store result back into the batch for GET polling
+#         with PIPELINE_LOCK:
+#             batch = PIPELINE_BATCHES.get(batch_id)
+#             if batch:
+#                 batch["analysis_result"] = {
+#                     "status": "completed",
+#                     "fraud_result": fraud_result,
+#                     **policy_result,
+#                 }
+#         print(f"[AUTO-ANALYSIS COMPLETE] batch={batch_id}")
+
+#     except Exception as exc:
+#         print(f"[AUTO-ANALYSIS ERROR] batch={batch_id} error={exc}")
+#         with PIPELINE_LOCK:
+#             batch = PIPELINE_BATCHES.get(batch_id)
+#             if batch:
+#                 batch["analysis_result"] = {"status": "error", "error": str(exc)}
+
+def _run_fraud_and_policy_background(batch_id: str, claim_payload: Dict[str, Any]) -> None:
+    started_at = time.time()
+    try:
+        from api.routers.fraud_bridge import run_full_analysis_sync
+
+        print(f"[AUTO-ANALYSIS START] batch={batch_id}")
+        result = run_full_analysis_sync(claim_payload)
+
+        with PIPELINE_LOCK:
+            batch = PIPELINE_BATCHES.get(batch_id)
+            if batch:
+                batch["analysis_result"] = {
+                    "status": "completed",
+                    "started_at": started_at,
+                    "completed_at": time.time(),
+                    "processing_ms": int((time.time() - started_at) * 1000),
+                    **result,
+                }
+                batch["updated_at"] = time.time()
+        print(
+            f"[AUTO-ANALYSIS COMPLETE] batch={batch_id} "
+            f"policy_status={result.get('policy_final_status')}"
+        )
+    except Exception as exc:
+        print(f"[AUTO-ANALYSIS ERROR] batch={batch_id} error={exc}")
+        with PIPELINE_LOCK:
+            batch = PIPELINE_BATCHES.get(batch_id)
+            if batch:
+                batch["analysis_result"] = {
+                    "status": "error",
+                    "started_at": started_at,
+                    "completed_at": time.time(),
+                    "processing_ms": int((time.time() - started_at) * 1000),
+                    "error": str(exc),
+                }
+                batch["updated_at"] = time.time()
+
 
 def get_rapid_ocr():
     global RAPID_OCR_INSTANCE
@@ -2137,6 +2489,1133 @@ def run_json_extraction_from_pages(
             f"model={llm_model or 'none'} llm_ms={int((time.time() - extraction_started_at) * 1000)}"
         )
 
+INTEGRATION_EXCLUDED_KEYS = set(SCHEMA_METADATA_FIELDS) | {"LowConfidenceFields", "UnmappedFields"}
+
+NAME_HONORIFICS = {
+    "mr", "mrs", "ms", "miss", "mx", "mister", "shri", "sri", "shree",
+    "kumar", "kumari", "dr", "doctor", "prof", "professor",
+}
+
+KEY_ALIAS_MAP = {
+    "fullname": "name",
+    "full_name": "name",
+    "claimantname": "name",
+    "claimant_name": "name",
+    "lifeassuredname": "name",
+    "life_assured_name": "name",
+    "fatherorhusbandname": "father_or_husband_name",
+    "father_or_husband_name": "father_or_husband_name",
+    "fathername": "father_name",
+    "mothername": "mother_name",
+    "spousename": "spouse_name",
+    "guardianname": "guardian_name",
+    "aadhaarnumber": "aadhaar_number",
+    "maskedaadhaarnumber": "aadhaar_number",
+    "deceasedaadhaarnumber": "aadhaar_number",
+    "fatheraadhaarnumber": "aadhaar_number",
+    "uid": "aadhaar_number",
+    "uidofdeceased": "aadhaar_number",
+    "pan": "pan_number",
+    "pannumber": "pan_number",
+    "voteroidnumber": "voter_id_number",
+    "epicnumber": "voter_id_number",
+    "passportnumber": "passport_number",
+    "drivinglicencenumber": "driving_licence_number",
+    "driverlicencenumber": "driving_licence_number",
+    "registrationnumber": "registration_number",
+    "doctorregistrationnumber": "doctor_registration_number",
+    "nmrnumber": "doctor_registration_number",
+    "doctorregno": "doctor_registration_number",
+    "hospitalid": "hospital_id",
+    "hospitalrohiniid": "hospital_rohini_id",
+    "rohiniid": "hospital_rohini_id",
+    "firnumber": "fir_number",
+    "dateofdeath": "date_of_death",
+    "dateofdischargeordeath": "date_of_death",
+    "causeofdeath": "cause_of_death",
+    "primarycauseofdeath": "cause_of_death",
+    "immediatecause": "cause_of_death",
+    "finalopinion": "cause_of_death",
+    "placeofdeath": "place_of_death",
+    "bankname": "bank_name",
+    "accountholdername": "account_holder_name",
+    "accountnumber": "account_number",
+    "ifsccode": "ifsc_code",
+    "micrcode": "micr_code",
+    "branchname": "branch_name",
+}
+
+NAME_FIELD_KEYS = {
+    "name",
+    "father_name",
+    "mother_name",
+    "spouse_name",
+    "guardian_name",
+    "father_or_husband_name",
+    "account_holder_name",
+}
+
+ID_FIELD_KEYS = {
+    "aadhaar_number",
+    "pan_number",
+    "voter_id_number",
+    "passport_number",
+    "driving_licence_number",
+    "registration_number",
+    "doctor_registration_number",
+    "hospital_rohini_id",
+    "hospital_id",
+    "fir_number",
+    "account_number",
+    "ifsc_code",
+    "micr_code",
+}
+
+BANK_FIELD_KEYS = {
+    "bank_name",
+    "account_holder_name",
+    "account_number",
+    "ifsc_code",
+    "micr_code",
+    "branch_name",
+    "account_type",
+}
+
+DATE_FIELD_KEYS = {
+    "date_of_death",
+    "date_of_birth",
+    "date_of_issue",
+    "date_of_registration",
+    "date_of_fir",
+    "date_of_admission",
+    "date_of_discharge",
+    "date_of_discharge_or_death",
+    "date",
+}
+
+CLAIMANT_DOC_TYPES_FOR_COMPARE = {
+    "claimant_statement_form",
+    "aadhaar_card",
+    "passport",
+    "driving_licence",
+    "voter_id",
+    "pan_card",
+    "bank_proof",
+    "identity_proof",
+    "address_proof",
+}
+
+LIFE_ASSURED_DOC_TYPES_FOR_COMPARE = {
+    "death_certificate",
+    "medico_legal_cause_of_death_certificate",
+    "discharge_summary",
+    "past_medical_records_and_treatment_papers",
+    "medical_attendant_hospital_certificate",
+    "employer_certificate",
+    "first_information_report",
+    "inquest_panchanana_report",
+    "final_police_investigation_report",
+    "postmortem_report",
+    "viscera_chemical_examination_report",
+    "newspaper_cutting",
+    "admission_form",
+    "diagnostic_test_report",
+    "indoor_case_papers",
+}
+
+
+def _snake_doc_type(raw: Any) -> str:
+    text = str(raw or "").strip()
+    if not text:
+        return "unknown_document"
+
+    # Robust CamelCase/PascalCase -> snake_case conversion that preserves acronyms:
+    # PANCard -> pan_card, VoterID -> voter_id, FIR -> fir.
+    snake = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", text)
+    snake = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", snake)
+    snake = re.sub(r"[^a-zA-Z0-9]+", "_", snake).strip("_").lower()
+    return snake or "unknown_document"
+
+
+def _safe_float(value: Any, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except Exception:
+        return default
+
+
+def _safe_int(value: Any, default: int = 0) -> int:
+    try:
+        return int(float(value))
+    except Exception:
+        return default
+
+
+def _normalize_ocr_confidence_ratio(value: Any) -> float:
+    numeric = _safe_float(value, 0.0)
+    if numeric > 1.0:
+        numeric = numeric / 100.0
+    numeric = max(0.0, min(1.0, numeric))
+    return round(numeric, 4)
+
+
+def _extract_scalar_from_node(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    if is_extraction_field_object(value):
+        return _extract_scalar_from_node(value.get("value"))
+    if isinstance(value, dict):
+        if "value" in value:
+            return _extract_scalar_from_node(value.get("value"))
+        if "source_text" in value:
+            return _extract_scalar_from_node(value.get("source_text"))
+        return None
+    if isinstance(value, list):
+        items = [_extract_scalar_from_node(item) for item in value]
+        items = [item for item in items if item]
+        if not items:
+            return None
+        if len(items) == 1:
+            return items[0]
+        return " | ".join(items)
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    text = str(value).strip()
+    return text or None
+
+
+def _walk_key_match_integration(obj: Any, key_candidates: List[str]) -> Optional[str]:
+    candidates = {key.lower() for key in key_candidates}
+
+    def _walk(node: Any) -> Optional[str]:
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if str(key).lower() in candidates:
+                    scalar = _extract_scalar_from_node(value)
+                    if scalar:
+                        return scalar
+                hit = _walk(value)
+                if hit:
+                    return hit
+        elif isinstance(node, list):
+            for item in node:
+                hit = _walk(item)
+                if hit:
+                    return hit
+        return None
+
+    return _walk(obj)
+
+
+def _walk_section_value(
+    obj: Any,
+    section_candidates: List[str],
+    field_candidates: List[str],
+) -> Optional[str]:
+    section_set = {key.lower() for key in section_candidates}
+
+    def _walk(node: Any) -> Optional[str]:
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if str(key).lower() in section_set:
+                    hit = _walk_key_match_integration(value, field_candidates)
+                    if hit:
+                        return hit
+                nested_hit = _walk(value)
+                if nested_hit:
+                    return nested_hit
+        elif isinstance(node, list):
+            for item in node:
+                nested_hit = _walk(item)
+                if nested_hit:
+                    return nested_hit
+        return None
+
+    return _walk(obj)
+
+
+def _extract_party_name(entities: Any, party: str) -> Optional[str]:
+    if party == "claimant":
+        direct = _walk_key_match_integration(entities, ["ClaimantName"])
+        if direct:
+            return direct
+        return _walk_section_value(entities, ["Claimant"], ["Name", "FullName"])
+    direct = _walk_key_match_integration(entities, ["LifeAssuredName"])
+    if direct:
+        return direct
+    return _walk_section_value(
+        entities,
+        ["LifeAssured", "Deceased", "Person", "LifeAssuredDetails"],
+        ["Name", "FullName"],
+    )
+
+
+def _extract_entities_from_payload(extracted_data: Dict[str, Any]) -> Dict[str, Any]:
+    entities: Dict[str, Any] = {}
+    for key, value in extracted_data.items():
+        if key in INTEGRATION_EXCLUDED_KEYS:
+            continue
+        entities[key] = value
+    return entities
+
+
+def _collect_ocr_text_from_entities(entities: Dict[str, Any], max_chars: int = 12000) -> str:
+    chunks: List[str] = []
+
+    def _walk(prefix: str, node: Any) -> None:
+        if isinstance(node, dict):
+            if is_extraction_field_object(node):
+                scalar = _extract_scalar_from_node(node)
+                if scalar:
+                    chunks.append(f"{prefix}: {scalar}" if prefix else scalar)
+                return
+            for key, value in node.items():
+                next_prefix = f"{prefix}.{key}" if prefix else str(key)
+                _walk(next_prefix, value)
+        elif isinstance(node, list):
+            for index, item in enumerate(node):
+                _walk(f"{prefix}[{index}]", item)
+
+    _walk("", entities)
+    return " | ".join(chunks)[:max_chars]
+
+
+def _collect_ocr_text_from_pages(pages: Any, max_chars: int = 12000) -> str:
+    if not isinstance(pages, list):
+        return ""
+    lines: List[str] = []
+    for page in pages:
+        if not isinstance(page, dict):
+            continue
+        raw_text = str(page.get("raw_text") or "").strip()
+        if raw_text:
+            lines.append(raw_text)
+    return "\n".join(lines)[:max_chars]
+
+
+def _normalize_for_cross_compare(value: str, kind: str) -> str:
+    text = str(value or "").strip().lower()
+    if not text:
+        return ""
+    if kind == "date":
+        return re.sub(r"[^0-9]+", "", text)
+    if kind == "id":
+        return re.sub(r"[^a-z0-9]+", "", text)
+    if kind == "name":
+        tokens = re.findall(r"[a-z0-9]+", text)
+        filtered = [token for token in tokens if token not in NAME_HONORIFICS]
+        return " ".join(filtered).strip()
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _normalize_key_token(token: Any) -> str:
+    raw = str(token or "").strip()
+    if not raw:
+        return ""
+    camel_split = re.sub(r"(?<!^)(?=[A-Z])", "_", raw)
+    normalized = re.sub(r"[^a-z0-9]+", "_", camel_split.lower()).strip("_")
+    return normalized
+
+
+def _canonical_leaf_key(raw_leaf: str) -> str:
+    token = _normalize_key_token(raw_leaf)
+    token_flat = token.replace("_", "")
+    return KEY_ALIAS_MAP.get(token_flat, KEY_ALIAS_MAP.get(token, token))
+
+
+def _infer_doc_subject(doc_type: str) -> str:
+    if doc_type in CLAIMANT_DOC_TYPES_FOR_COMPARE:
+        return "claimant"
+    if doc_type in LIFE_ASSURED_DOC_TYPES_FOR_COMPARE:
+        return "life_assured"
+    return "unknown"
+
+
+def _infer_subject_from_path(doc_type: str, path_tokens: List[str], canonical_leaf: str) -> str:
+    section = path_tokens[0] if path_tokens else ""
+    section_flat = section.replace("_", "")
+
+    if section_flat in {"claimant", "witness", "declarant"}:
+        return "claimant"
+    if section_flat in {"lifeassured", "deceased"}:
+        return "life_assured"
+    if section_flat == "bank" or canonical_leaf in BANK_FIELD_KEYS:
+        return "bank"
+    if section_flat in {"hospital"}:
+        return "hospital"
+    if section_flat in {"police", "fir"}:
+        return "police"
+    if section_flat in {"treatingdoctor", "familydoctor", "lastattendingdoctor", "doctor"}:
+        return "doctor"
+    if canonical_leaf in {"date_of_death", "cause_of_death", "place_of_death"}:
+        return "life_assured"
+    if section_flat in {"person", "identifiers", "address", "family", "passport", "licence", "license"}:
+        return _infer_doc_subject(doc_type)
+    return _infer_doc_subject(doc_type)
+
+
+def _infer_field_kind(canonical_leaf: str, path_tokens: List[str]) -> str:
+    if canonical_leaf in NAME_FIELD_KEYS:
+        return "name"
+    if canonical_leaf in ID_FIELD_KEYS:
+        return "id"
+    if canonical_leaf in DATE_FIELD_KEYS or "date" in canonical_leaf:
+        return "date"
+    token_hint = ".".join(path_tokens)
+    if "date" in token_hint:
+        return "date"
+    if any(part in canonical_leaf for part in ["number", "id", "code"]):
+        return "id"
+    return "text"
+
+
+def _flatten_extracted_entities_fields(entities: Dict[str, Any]) -> List[Dict[str, Any]]:
+    flattened: List[Dict[str, Any]] = []
+
+    def _walk(node: Any, path_tokens: List[str]) -> None:
+        if is_extraction_field_object(node):
+            value = _extract_scalar_from_node(node.get("value"))
+            if not value:
+                return
+            extraction_conf = _safe_float(node.get("extraction_confidence"), 0.0)
+            ocr_conf = _safe_float(node.get("ocr_confidence"), 0.0)
+            ocr_ratio = ocr_conf / 100.0 if ocr_conf > 1.0 else ocr_conf
+            ocr_ratio = max(0.0, min(1.0, ocr_ratio))
+            confidence_score = round((0.7 * extraction_conf) + (0.3 * ocr_ratio), 4)
+            flattened.append({
+                "path_tokens": list(path_tokens),
+                "path": ".".join(path_tokens),
+                "leaf": path_tokens[-1] if path_tokens else "",
+                "value": value,
+                "source_text": _extract_scalar_from_node(node.get("source_text")),
+                "ocr_confidence": node.get("ocr_confidence"),
+                "extraction_confidence": node.get("extraction_confidence"),
+                "confidence_score": confidence_score,
+            })
+            return
+
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key in {"LowConfidenceFields", "UnmappedFields"}:
+                    continue
+                _walk(value, path_tokens + [str(key)])
+            return
+
+        if isinstance(node, list):
+            for index, item in enumerate(node):
+                _walk(item, path_tokens + [f"[{index}]"])
+
+    _walk(entities, [])
+    return flattened
+
+
+def _cross_verify_doc_key(doc: Dict[str, Any]) -> str:
+    raw = str(doc.get("doc_type") or doc.get("document_type") or "")
+    key = _snake_doc_type(raw)
+    aliases = {
+        "p_a_n_card": "pan_card",
+        "voter_i_d": "voter_id",
+        "driving_license": "driving_licence",
+    }
+    return aliases.get(key, key)
+
+
+def _split_cross_verify_path(path: str) -> List[Any]:
+    parts: List[Any] = []
+    for segment in str(path or "").split("."):
+        token = segment.strip()
+        if not token:
+            continue
+        chunk = ""
+        idx_buffer = ""
+        in_index = False
+        for ch in token:
+            if ch == "[":
+                if chunk:
+                    parts.append(chunk)
+                    chunk = ""
+                in_index = True
+                idx_buffer = ""
+            elif ch == "]":
+                if in_index and idx_buffer.isdigit():
+                    parts.append(int(idx_buffer))
+                in_index = False
+                idx_buffer = ""
+            else:
+                if in_index:
+                    idx_buffer += ch
+                else:
+                    chunk += ch
+        if chunk:
+            if chunk.isdigit():
+                parts.append(int(chunk))
+            else:
+                parts.append(chunk)
+        elif token.isdigit():
+            parts.append(int(token))
+    return parts
+
+
+def _walk_cross_verify_path(node: Any, path: str) -> Any:
+    current = node
+    for part in _split_cross_verify_path(path):
+        if isinstance(part, int):
+            if isinstance(current, list) and 0 <= part < len(current):
+                current = current[part]
+            else:
+                return None
+        else:
+            if isinstance(current, dict) and part in current:
+                current = current[part]
+            else:
+                return None
+    return current
+
+
+def _cross_verify_path_variants(path: str) -> List[str]:
+    variants = [path]
+    if str(path).startswith("extracted_entities."):
+        variants.append(str(path)[len("extracted_entities."):])
+    else:
+        variants.append(f"extracted_entities.{path}")
+    deduped: List[str] = []
+    for item in variants:
+        if item and item not in deduped:
+            deduped.append(item)
+    return deduped
+
+
+def _extract_canonical_field_from_entities(entities: Dict[str, Any], path: str) -> Optional[Dict[str, Any]]:
+    for candidate_path in _cross_verify_path_variants(path):
+        node = _walk_cross_verify_path(entities, candidate_path)
+        if node is None:
+            continue
+        if is_extraction_field_object(node):
+            value = _extract_scalar_from_node(node.get("value"))
+            if not value:
+                continue
+            extraction_conf = _safe_float(node.get("extraction_confidence"), 0.0)
+            ocr_conf = _safe_float(node.get("ocr_confidence"), 0.0)
+            ocr_ratio = ocr_conf / 100.0 if ocr_conf > 1.0 else ocr_conf
+            ocr_ratio = max(0.0, min(1.0, ocr_ratio))
+            return {
+                "path": candidate_path,
+                "value": value,
+                "source_text": _extract_scalar_from_node(node.get("source_text")),
+                "ocr_confidence": node.get("ocr_confidence"),
+                "extraction_confidence": node.get("extraction_confidence"),
+                "confidence_score": round((0.7 * extraction_conf) + (0.3 * ocr_ratio), 4),
+            }
+        scalar = _extract_scalar_from_node(node)
+        if scalar:
+            return {
+                "path": candidate_path,
+                "value": scalar,
+                "source_text": None,
+                "ocr_confidence": None,
+                "extraction_confidence": None,
+                "confidence_score": 0.0,
+            }
+    return None
+
+
+def _aadhaar_values_match(left: str, right: str) -> bool:
+    left = str(left or "")
+    right = str(right or "")
+    if not left or not right:
+        return False
+    left_digits = "".join(ch for ch in left if ch.isdigit())
+    right_digits = "".join(ch for ch in right if ch.isdigit())
+    if not left_digits or not right_digits:
+        return False
+    left_masked = "x" in left.lower()
+    right_masked = "x" in right.lower()
+    if not left_masked and not right_masked:
+        return left_digits == right_digits
+    return len(left_digits) >= 4 and len(right_digits) >= 4 and left_digits[-4:] == right_digits[-4:]
+
+
+def _canonical_field_values_match(field_id: str, kind: str, left: str, right: str) -> bool:
+    if field_id.endswith("aadhaar_number"):
+        return _aadhaar_values_match(left, right)
+    return str(left or "") == str(right or "")
+
+
+def _group_cross_verify_values(compare_pool: List[Dict[str, Any]], field_id: str, kind: str) -> List[Dict[str, Any]]:
+    groups: List[Dict[str, Any]] = []
+    for item in compare_pool:
+        placed = False
+        for group in groups:
+            if _canonical_field_values_match(
+                field_id,
+                kind,
+                str(item.get("normalized_value") or ""),
+                str(group.get("normalized_value") or ""),
+            ):
+                group["documents"].append(item)
+                # Prefer a fuller representative token for readability.
+                current_norm = str(group.get("normalized_value") or "")
+                incoming_norm = str(item.get("normalized_value") or "")
+                if len(incoming_norm) > len(current_norm):
+                    group["normalized_value"] = incoming_norm
+                placed = True
+                break
+        if not placed:
+            groups.append({
+                "normalized_value": str(item.get("normalized_value") or ""),
+                "documents": [item],
+            })
+    return groups
+
+
+def _build_semantic_key_for_field(doc: Dict[str, Any], field: Dict[str, Any]) -> Tuple[str, str, str]:
+    path_tokens = [
+        _normalize_key_token(token)
+        for token in field.get("path_tokens", [])
+        if token and not str(token).startswith("[")
+    ]
+    if not path_tokens:
+        return "", "", "text"
+
+    canonical_leaf = _canonical_leaf_key(field.get("leaf", ""))
+    subject = _infer_subject_from_path(str(doc.get("doc_type") or ""), path_tokens, canonical_leaf)
+    kind = _infer_field_kind(canonical_leaf, path_tokens)
+
+    if not canonical_leaf:
+        normalized_path = ".".join(path_tokens)
+        semantic_key = f"path.{normalized_path}"
+    else:
+        semantic_key = f"{subject}.{canonical_leaf}"
+
+    label = semantic_key.replace("_", " ").replace(".", " / ").title()
+    return semantic_key, label, kind
+
+
+def _build_pipeline_doc_payloads(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    payload_docs: List[Dict[str, Any]] = []
+    for doc in docs:
+        result = doc.get("result")
+        if not isinstance(result, dict):
+            continue
+        extracted_data = result.get("extracted_data")
+        if not isinstance(extracted_data, dict):
+            continue
+
+        entities = _extract_entities_from_payload(extracted_data)
+        fallback_type = result.get("doc_type") or doc.get("doc_type") or ""
+        raw_document_type = str(
+            extracted_data.get("document_type")
+            or DOC_TYPE_MAPPING.get(str(fallback_type), fallback_type)
+            or fallback_type
+        ).strip()
+        if not raw_document_type:
+            raw_document_type = "UnknownDocument"
+        normalized_doc_type = _snake_doc_type(raw_document_type)
+
+        pages = result.get("pages")
+        ocr_text = _collect_ocr_text_from_pages(pages)
+        if not ocr_text:
+            ocr_text = _collect_ocr_text_from_entities(entities)
+
+        validation_flags = extracted_data.get("validation_flags")
+        if not isinstance(validation_flags, list):
+            validation_flags = []
+        validation_flags = [str(flag) for flag in validation_flags if str(flag).strip()]
+        if doc.get("status") == "validation_error" and "VALIDATION_ERROR" not in validation_flags:
+            validation_flags.append("VALIDATION_ERROR")
+
+        global_metrics = result.get("global_metrics") if isinstance(result.get("global_metrics"), dict) else {}
+        metadata = {
+            "doc_id": doc.get("doc_id"),
+            "request_id": doc.get("request_id"),
+            "filename": doc.get("filename"),
+            "status": doc.get("status"),
+            "pages": _safe_int(extracted_data.get("pages"), _safe_int(global_metrics.get("total_pages"), 0)),
+            "global_metrics": global_metrics,
+        }
+
+        payload_docs.append({
+            "doc_id": doc.get("doc_id"),
+            "request_id": doc.get("request_id"),
+            "doc_type": normalized_doc_type,
+            "document_type": raw_document_type,
+            "ocr_confidence": _normalize_ocr_confidence_ratio(extracted_data.get("ocr_confidence")),
+            "ocr_text": ocr_text,
+            "metadata": metadata,
+            "validation_flags": validation_flags,
+            "extracted_entities": entities,
+        })
+    return payload_docs
+
+
+def _collect_claim_core_from_docs(payload_docs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    joined_entities = {"docs": [doc.get("extracted_entities", {}) for doc in payload_docs]}
+
+    claimant_name = _extract_party_name(joined_entities, "claimant")
+    claimant_relationship = _walk_key_match_integration(
+        joined_entities,
+        ["RelationshipWithLifeAssured", "RelationshipWithDeceased", "Relationship"],
+    )
+    bank_account = _walk_key_match_integration(joined_entities, ["AccountNumber"])
+    bank_name = _walk_key_match_integration(joined_entities, ["BankName"])
+
+    life_assured_name = _extract_party_name(joined_entities, "life_assured")
+    life_assured_age = _walk_key_match_integration(joined_entities, ["Age"])
+    life_assured_occupation = _walk_key_match_integration(joined_entities, ["Occupation", "OccupationCategory", "Designation"])
+    sum_assured = _walk_key_match_integration(joined_entities, ["SumAssured"])
+
+    date_of_death = _walk_key_match_integration(joined_entities, ["DateOfDeath", "DateOfDischargeOrDeath"])
+    cause_of_death = _walk_key_match_integration(
+        joined_entities,
+        ["CauseOfDeath", "PrimaryCauseOfDeath", "ImmediateCause", "FinalOpinion"],
+    )
+    place_of_death = _walk_key_match_integration(joined_entities, ["PlaceOfDeath"])
+    hospital_name = _walk_key_match_integration(joined_entities, ["HospitalName", "InstitutionName"])
+    hospital_address = _walk_key_match_integration(joined_entities, ["HospitalAddress", "InstitutionAddress"])
+    doctor_name = _walk_key_match_integration(joined_entities, ["DoctorName", "AttendingDoctor", "DiagnosingDoctorName"])
+    doctor_registration_number = _walk_key_match_integration(joined_entities, ["DoctorRegistrationNumber", "RegistrationNumber", "NMRNumber", "DoctorRegNo"])
+    hospital_rohini_id = _walk_key_match_integration(joined_entities, ["HospitalRohiniId", "RohiniId", "ROHINIID"])
+    fir_number = _walk_key_match_integration(joined_entities, ["FIRNumber"])
+
+    return {
+        "claimant": {
+            "name": claimant_name or "",
+            "relationship_to_life_assured": claimant_relationship or "",
+            "bank_account_number": bank_account or "",
+            "bank_name": bank_name or "",
+        },
+        "life_assured": {
+            "name": life_assured_name or "",
+            "age": _safe_int(life_assured_age, 0),
+            "occupation": life_assured_occupation or "",
+            "sum_assured": _safe_float(sum_assured, 0.0),
+        },
+        "death_information": {
+            "date_of_death": date_of_death or "",
+            "cause_of_death": cause_of_death or "",
+            "place_of_death": place_of_death or "",
+            "hospital_name": hospital_name or "",
+            "hospital_address": hospital_address or "",
+            "doctor_name": doctor_name or "",
+            "doctor_registration_number": doctor_registration_number or "",
+            "hospital_rohini_id": hospital_rohini_id or "",
+            "fir_number": fir_number or "",
+        },
+    }
+
+
+def _build_medical_records_from_docs(payload_docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    records: List[Dict[str, Any]] = []
+    medical_doc_types = {
+        "medico_legal_cause_of_death_certificate",
+        "discharge_summary",
+        "past_medical_records_and_treatment_papers",
+        "medical_attendant_hospital_certificate",
+        "postmortem_report",
+        "viscera_chemical_examination_report",
+        "admission_form",
+        "diagnostic_test_report",
+        "indoor_case_papers",
+    }
+    for doc in payload_docs:
+        doc_type = str(doc.get("doc_type") or "")
+        if doc_type not in medical_doc_types:
+            continue
+        entities = doc.get("extracted_entities", {})
+        diagnosis = _walk_key_match_integration(
+            entities,
+            ["FinalDiagnosis", "ProvisionalDiagnosis", "ImmediateCause", "CauseOfDeath", "Diagnosis"],
+        ) or ""
+        treatment = _walk_key_match_integration(entities, ["TreatmentGiven", "Treatment"]) or ""
+        date_value = _walk_key_match_integration(
+            entities,
+            ["DateOfAdmission", "DateOfDischargeOrDeath", "Date", "DateOfReport"],
+        ) or ""
+        record = {
+            "record_type": doc_type,
+            "hospital_name": _walk_key_match_integration(entities, ["HospitalName", "InstitutionName"]) or "",
+            "doctor_name": _walk_key_match_integration(entities, ["DoctorName", "AttendingDoctor", "DiagnosingDoctorName"]) or "",
+            "diagnosis": diagnosis,
+            "treatment": treatment,
+            "content_summary": diagnosis or treatment,
+            "admission_date": _walk_key_match_integration(entities, ["DateOfAdmission"]) or "",
+            "discharge_date": _walk_key_match_integration(entities, ["DateOfDischargeOrDeath"]) or "",
+            "date": date_value,
+            "ocr_text": str(doc.get("ocr_text") or "")[:4000],
+        }
+        if any(value for key, value in record.items() if key != "record_type"):
+            records.append(record)
+    return records
+
+
+def _build_fir_records_from_docs(payload_docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    records: List[Dict[str, Any]] = []
+    for doc in payload_docs:
+        doc_type = str(doc.get("doc_type") or "")
+        if "fir" not in doc_type and "inquest" not in doc_type and "police" not in doc_type:
+            continue
+        entities = doc.get("extracted_entities", {})
+        fir_number = _walk_key_match_integration(entities, ["FIRNumber", "RegistrationNumber"])
+        if not fir_number:
+            continue
+        records.append({
+            "fir_number": fir_number,
+            "police_station": _walk_key_match_integration(entities, ["PoliceStationName", "PoliceStation"]) or "",
+            "date_filed": _walk_key_match_integration(entities, ["DateOfFIR", "DateOfRegistration"]) or "",
+            "date": _walk_key_match_integration(entities, ["DateOfFIR", "DateOfRegistration"]) or "",
+            "description": _walk_key_match_integration(
+                entities,
+                ["Description", "NatureOfIncident", "IncidentDescription"],
+            ) or "",
+            "incident_description": _walk_key_match_integration(
+                entities,
+                ["Description", "NatureOfIncident", "IncidentDescription"],
+            ) or "",
+            "location": _walk_key_match_integration(entities, ["Location", "PlaceOfIncident"]) or "",
+        })
+    return records
+
+
+def _build_cross_verify_skipped(reason: str, mapping_scope: str) -> Dict[str, Any]:
+    return {
+        "status": "skipped",
+        "decision": "NOT_APPLICABLE",
+        "review_required": False,
+        "overall_match_score": None,
+        "comparable_fields": 0,
+        "matched_fields_count": 0,
+        "mismatched_fields_count": 0,
+        "mismatched_fields": [],
+        "field_results": [],
+        "settings": {
+            "min_confidence": max(0.0, min(1.0, parse_float_env("CROSS_VERIFY_MIN_CONFIDENCE", 0.35))),
+            "name_honorifics_removed": sorted(NAME_HONORIFICS),
+            "mapping_scope": mapping_scope,
+        },
+        "updated_at": time.time(),
+        "reason": reason,
+    }
+
+
+def _detect_stage2_cross_verify_branch(payload_docs: List[Dict[str, Any]]) -> str:
+    joined_entities = {"docs": [doc.get("extracted_entities", {}) for doc in payload_docs]}
+    category = (_walk_key_match_integration(joined_entities, ["DeathCategory"]) or "").strip().upper()
+    if category.startswith("UNNATURAL"):
+        return "unnatural_death"
+    if category.startswith("NATURAL"):
+        return "natural_death"
+
+    doc_types = {str(doc.get("doc_type") or "").strip() for doc in payload_docs}
+    if doc_types & STAGE2_UNNATURAL_DOC_TYPES:
+        return "unnatural_death"
+    if doc_types & STAGE2_NATURAL_DOC_TYPES:
+        return "natural_death"
+    return "natural_death"
+
+
+def _select_stage2_cross_verify_map(payload_docs: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], str]:
+    stage2_map = get_stage2_cross_verify_map()
+    branch = _detect_stage2_cross_verify_branch(payload_docs)
+    selected = stage2_map.get(branch, {})
+    if not isinstance(selected, dict):
+        selected = {}
+    selected.setdefault("fields", {})
+    selected.setdefault("documents", {})
+    selected.setdefault("version", stage2_map.get("version", 0))
+    selected.setdefault("mapping_scope", branch)
+    return selected, branch
+
+
+def _build_cross_document_verification(
+    payload_docs: List[Dict[str, Any]],
+    total_docs: int,
+    terminal_docs: int,
+    map_payload: Optional[Dict[str, Any]] = None,
+    mapping_scope: str = "stage1",
+) -> Dict[str, Any]:
+    min_confidence = max(0.0, min(1.0, parse_float_env("CROSS_VERIFY_MIN_CONFIDENCE", 0.35)))
+    map_payload = map_payload or get_canonical_cross_verify_map()
+    map_fields = map_payload.get("fields", {}) if isinstance(map_payload.get("fields"), dict) else {}
+    map_docs = map_payload.get("documents", {}) if isinstance(map_payload.get("documents"), dict) else {}
+
+    grouped: Dict[str, Dict[str, Any]] = {}
+    for field_id, cfg in map_fields.items():
+        grouped[str(field_id)] = {
+            "field_label": str(cfg.get("label") or field_id),
+            "kind": str(cfg.get("kind") or "text"),
+            "evidence": [],
+            "missing": [],
+            "expected_docs": [],
+        }
+
+    document_logs: List[Dict[str, Any]] = []
+    for doc in payload_docs:
+        doc_key = _cross_verify_doc_key(doc)
+        doc_mapping = map_docs.get(doc_key)
+        entities = doc.get("extracted_entities")
+        if not isinstance(doc_mapping, dict) or not isinstance(entities, dict):
+            continue
+
+        doc_id = doc.get("doc_id")
+        doc_ref = {
+            "doc_id": doc_id,
+            "request_id": doc.get("request_id"),
+            "document_type": doc.get("document_type"),
+            "doc_type": doc.get("doc_type"),
+        }
+        present_fields: List[str] = []
+        missing_fields: List[str] = []
+
+        for field_id, raw_paths in doc_mapping.items():
+            entry = grouped.get(str(field_id))
+            if not entry:
+                continue
+            paths: List[str] = []
+            if isinstance(raw_paths, list):
+                paths = [str(path) for path in raw_paths if str(path).strip()]
+            elif isinstance(raw_paths, str) and raw_paths.strip():
+                paths = [raw_paths.strip()]
+            if not paths:
+                continue
+
+            entry["expected_docs"].append(doc_ref)
+
+            selected = None
+            for path in paths:
+                candidate = _extract_canonical_field_from_entities(entities, path)
+                if not candidate:
+                    continue
+                normalized_value = _normalize_for_cross_compare(candidate.get("value", ""), entry.get("kind", "text"))
+                if not normalized_value:
+                    continue
+                selected = {
+                    "doc_id": doc_id,
+                    "request_id": doc.get("request_id"),
+                    "document_type": doc.get("document_type"),
+                    "doc_type": doc.get("doc_type"),
+                    "path": candidate.get("path"),
+                    "value": candidate.get("value"),
+                    "normalized_value": normalized_value,
+                    "source_text": candidate.get("source_text"),
+                    "ocr_confidence": candidate.get("ocr_confidence"),
+                    "extraction_confidence": candidate.get("extraction_confidence"),
+                    "confidence_score": candidate.get("confidence_score"),
+                }
+                break
+
+            if selected:
+                entry["evidence"].append(selected)
+                present_fields.append(str(field_id))
+            else:
+                entry["missing"].append({
+                    **doc_ref,
+                    "expected_paths": paths,
+                })
+                missing_fields.append(str(field_id))
+
+        document_logs.append({
+            **doc_ref,
+            "mapped_fields_count": len(present_fields) + len(missing_fields),
+            "present_fields": present_fields,
+            "missing_fields": missing_fields,
+        })
+
+    field_results: List[Dict[str, Any]] = []
+    mismatched_fields: List[Dict[str, Any]] = []
+    comparable_count = 0
+    matched_count = 0
+
+    for semantic_key in sorted(grouped.keys()):
+        entry = grouped[semantic_key]
+        evidence = entry.get("evidence", [])
+        expected_docs = entry.get("expected_docs", [])
+        missing_docs = entry.get("missing", [])
+        if not expected_docs:
+            continue
+
+        best_by_doc: Dict[str, Dict[str, Any]] = {}
+        for item in evidence:
+            doc_id = str(item.get("doc_id") or item.get("document_type") or item.get("doc_type") or "unknown")
+            previous = best_by_doc.get(doc_id)
+            if previous is None or _safe_float(item.get("confidence_score"), 0.0) > _safe_float(previous.get("confidence_score"), 0.0):
+                best_by_doc[doc_id] = item
+
+        selected = list(best_by_doc.values())
+        high_conf_selected = [
+            item for item in selected
+            if _safe_float(item.get("confidence_score"), 0.0) >= min_confidence
+        ]
+        compare_pool = high_conf_selected if len(high_conf_selected) >= 2 else selected
+
+        status = "insufficient_evidence"
+        conflicting_groups: List[Dict[str, Any]] = []
+        if len(compare_pool) >= 2:
+            comparable_count += 1
+            value_groups = _group_cross_verify_values(compare_pool, semantic_key, str(entry.get("kind") or "text"))
+            if len(value_groups) == 1:
+                status = "match"
+                matched_count += 1
+            else:
+                status = "mismatch"
+                for group in value_groups:
+                    norm_value = group.get("normalized_value")
+                    items = group.get("documents") or []
+                    conflicting_groups.append({
+                        "normalized_value": norm_value,
+                        "values": sorted({str(sample.get("value") or "") for sample in items}),
+                        "documents": items,
+                    })
+                mismatched_fields.append({
+                    "field_id": semantic_key,
+                    "field_label": entry.get("field_label"),
+                    "comparison_mode": "high_confidence" if compare_pool is high_conf_selected else "all_evidence",
+                    "values": sorted({str(item.get("value") or "") for item in compare_pool}),
+                    "conflicting_groups": conflicting_groups,
+                    "documents": compare_pool,
+                })
+
+        field_results.append({
+            "field_id": semantic_key,
+            "field_label": entry.get("field_label"),
+            "kind": entry.get("kind"),
+            "status": status,
+            "comparison_mode": "high_confidence" if compare_pool is high_conf_selected else "all_evidence",
+            "expected_documents_count": len(expected_docs),
+            "documents_with_value_count": len(selected),
+            "evidence_count": len(selected),
+            "evidence": selected,
+            "missing_in_documents": missing_docs,
+        })
+
+    overall_match_score = round((matched_count * 100.0) / comparable_count, 2) if comparable_count > 0 else None
+    review_required = bool(mismatched_fields) or comparable_count == 0
+    decision = "MATCH" if overall_match_score is not None and overall_match_score >= 80.0 and not mismatched_fields else "MANUAL_REVIEW"
+    status = "completed" if total_docs > 0 and terminal_docs >= total_docs else "processing"
+
+    return {
+        "status": status,
+        "decision": decision,
+        "review_required": review_required,
+        "overall_match_score": overall_match_score,
+        "comparable_fields": comparable_count,
+        "matched_fields_count": matched_count,
+        "mismatched_fields_count": len(mismatched_fields),
+        "mismatched_fields": mismatched_fields,
+        "field_results": field_results,
+        "document_field_log": document_logs,
+        "settings": {
+            "min_confidence": min_confidence,
+            "name_honorifics_removed": sorted(NAME_HONORIFICS),
+            "mapping_version": map_payload.get("version"),
+            "mapping_scope": mapping_scope,
+        },
+        "updated_at": time.time(),
+    }
+
+
+def _build_next_step_claim_case_payload(
+    batch_id: str,
+    payload_docs: List[Dict[str, Any]],
+    cross_verification: Dict[str, Any],
+    stage2_cross_verification: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    core = _collect_claim_core_from_docs(payload_docs)
+    submitted_documents: List[Dict[str, Any]] = []
+    ocr_confidence_scores: Dict[str, float] = {}
+    aggregate_flags: List[str] = []
+
+    for doc in payload_docs:
+        doc_type = str(doc.get("doc_type") or "unknown_document")
+        ocr_confidence = _normalize_ocr_confidence_ratio(doc.get("ocr_confidence"))
+        current = ocr_confidence_scores.get(doc_type)
+        if current is None or ocr_confidence > current:
+            ocr_confidence_scores[doc_type] = ocr_confidence
+
+        validation_flags = [str(flag) for flag in (doc.get("validation_flags") or []) if str(flag).strip()]
+        aggregate_flags.extend(validation_flags)
+        entities = doc.get("extracted_entities", {})
+        submitted_documents.append({
+            "doc_type": doc_type,
+            "document_type": doc.get("document_type") or "",
+            "ocr_confidence": ocr_confidence,
+            "ocr_text": str(doc.get("ocr_text") or "")[:12000],
+            "metadata": doc.get("metadata") or {},
+            "validation_flags": validation_flags,
+            "hospital_rohini_id": _walk_key_match_integration(entities, ["HospitalRohiniId", "RohiniId", "ROHINIID"]),
+            "doctor_registration_number": _walk_key_match_integration(entities, ["DoctorRegistrationNumber", "RegistrationNumber", "NMRNumber", "DoctorRegNo"]),
+            "extracted_entities": entities,
+        })
+
+    mismatch_ids = [item.get("field_id") for item in cross_verification.get("mismatched_fields", []) if item.get("field_id")]
+    stage2_mismatch_ids: List[str] = []
+    if isinstance(stage2_cross_verification, dict):
+        stage2_mismatch_ids = [
+            item.get("field_id")
+            for item in stage2_cross_verification.get("mismatched_fields", [])
+            if item.get("field_id")
+        ]
+    for field_id in mismatch_ids:
+        aggregate_flags.append(f"CROSS_DOC_MISMATCH:{field_id}")
+    for field_id in stage2_mismatch_ids:
+        aggregate_flags.append(f"CROSS_DOC_MISMATCH_STAGE2:{field_id}")
+
+    deduped_flags: List[str] = []
+    for flag in aggregate_flags:
+        if flag not in deduped_flags:
+            deduped_flags.append(flag)
+
+    return {
+        "claim_case_id": batch_id,
+        "claim_source": "stage_pipeline",
+        "claimant": core["claimant"],
+        "life_assured": core["life_assured"],
+        "death_information": core["death_information"],
+        "submitted_documents": submitted_documents,
+        "medical_records": _build_medical_records_from_docs(payload_docs),
+        "fir_records": _build_fir_records_from_docs(payload_docs),
+        "ocr_confidence_scores": ocr_confidence_scores,
+        "validation_flags": deduped_flags,
+        "cross_document_verification": {
+            "overall_match_score": cross_verification.get("overall_match_score"),
+            "decision": cross_verification.get("decision"),
+            "review_required": cross_verification.get("review_required"),
+            "mismatched_fields": mismatch_ids,
+            "stage1": {
+                "overall_match_score": cross_verification.get("overall_match_score"),
+                "decision": cross_verification.get("decision"),
+                "review_required": cross_verification.get("review_required"),
+                "mismatched_fields": mismatch_ids,
+            },
+            "stage2": {
+                "overall_match_score": (
+                    stage2_cross_verification.get("overall_match_score")
+                    if isinstance(stage2_cross_verification, dict)
+                    else None
+                ),
+                "decision": (
+                    stage2_cross_verification.get("decision")
+                    if isinstance(stage2_cross_verification, dict)
+                    else "NOT_APPLICABLE"
+                ),
+                "review_required": (
+                    stage2_cross_verification.get("review_required")
+                    if isinstance(stage2_cross_verification, dict)
+                    else False
+                ),
+                "mismatched_fields": stage2_mismatch_ids,
+            },
+        },
+        "prepared_at": time.time(),
+    }
+
+
+def _batch_face_verification_ready(batch: Dict[str, Any]) -> bool:
+    face_verification = batch.get("face_verification") or {}
+    if not face_verification.get("enabled"):
+        return True
+    return is_face_status_terminal(face_verification.get("status"))
+
+
 def recompute_pipeline_batch_locked(batch: Dict[str, Any]) -> None:
     docs = list(batch.get("docs", {}).values())
     total = len(docs)
@@ -2157,6 +3636,82 @@ def recompute_pipeline_batch_locked(batch: Dict[str, Any]) -> None:
     }
     batch["status"] = "completed" if total > 0 and terminal == total else "processing"
     batch["updated_at"] = time.time()
+
+    stage1_docs = [doc for doc in docs if is_stage1_internal_doc_type(doc.get("doc_type"))]
+    stage2_docs = [doc for doc in docs if is_stage2_internal_doc_type(doc.get("doc_type"))]
+
+    stage1_total = len(stage1_docs)
+    stage1_terminal = sum(1 for doc in stage1_docs if doc.get("status") in PIPELINE_TERMINAL_STATUSES)
+    stage2_total = len(stage2_docs)
+    stage2_terminal = sum(1 for doc in stage2_docs if doc.get("status") in PIPELINE_TERMINAL_STATUSES)
+
+    stage1_payload_docs = _build_pipeline_doc_payloads(stage1_docs)
+    stage2_payload_docs = _build_pipeline_doc_payloads(stage2_docs)
+    payload_docs = list(stage1_payload_docs) + list(stage2_payload_docs)
+
+    if stage1_total > 0:
+        cross_verification = _build_cross_document_verification(
+            stage1_payload_docs,
+            stage1_total,
+            stage1_terminal,
+            map_payload=get_canonical_cross_verify_map(),
+            mapping_scope="stage1",
+        )
+    else:
+        cross_verification = _build_cross_verify_skipped(
+            "No Stage 1 documents available in this batch.",
+            mapping_scope="stage1",
+        )
+
+    if stage2_total > 0 and stage2_payload_docs:
+        stage2_map_payload, stage2_scope = _select_stage2_cross_verify_map(stage2_payload_docs)
+        cross_verification_stage2 = _build_cross_document_verification(
+            stage2_payload_docs,
+            stage2_total,
+            stage2_terminal,
+            map_payload=stage2_map_payload,
+            mapping_scope=stage2_scope,
+        )
+    elif stage2_total > 0:
+        cross_verification_stage2 = _build_cross_verify_skipped(
+            "Stage 2 documents exist but none have extractable entities yet.",
+            mapping_scope="stage2",
+        )
+    else:
+        cross_verification_stage2 = _build_cross_verify_skipped(
+            "No Stage 2 documents available in this batch.",
+            mapping_scope="stage2",
+        )
+
+    batch["cross_document_verification"] = cross_verification
+    batch["cross_document_verification_stage2"] = cross_verification_stage2
+    batch["next_step_claim_case_payload"] = _build_next_step_claim_case_payload(
+        batch.get("batch_id", ""),
+        payload_docs,
+        cross_verification,
+        cross_verification_stage2,
+    )
+
+    auto_analysis_enabled = parse_bool_env("AUTO_FRAUD_ANALYSIS", True)
+    if (
+        auto_analysis_enabled
+        and batch["status"] == "completed"
+        and _batch_face_verification_ready(batch)
+        and batch.get("analysis_result") is None
+    ):
+        payload = batch.get("next_step_claim_case_payload")
+        if isinstance(payload, dict):
+            batch["analysis_result"] = {
+                "status": "running",
+                "started_at": time.time(),
+            }
+            bid = batch.get("batch_id", "")
+            threading.Thread(
+                target=_run_fraud_and_policy_background,
+                args=(bid, payload),
+                daemon=True,
+            ).start()
+            print(f"[AUTO-ANALYSIS TRIGGERED] batch={bid} docs={total}")
 
 def update_pipeline_doc(batch_id: str, doc_id: str, **updates) -> None:
     with PIPELINE_LOCK:
@@ -2196,6 +3751,10 @@ def get_pipeline_batch_public(batch_id: str) -> Optional[Dict[str, Any]]:
             "workers": batch["workers"],
             "docs": list(batch["docs"].values()),
             "face_verification": batch.get("face_verification"),
+            "cross_document_verification": batch.get("cross_document_verification"),
+            "cross_document_verification_stage2": batch.get("cross_document_verification_stage2"),
+            "next_step_claim_case_payload": batch.get("next_step_claim_case_payload"),
+            "analysis_result": batch.get("analysis_result"),  # fraud + policy result (auto-populated)
         }
 
 def build_face_only_document_result(doc_type: str, filename: str) -> Dict[str, Any]:
@@ -2459,6 +4018,7 @@ def run_claims_ocr(
     engine: str = Form("auto"),  # kept for backwards compatibility but not used
     extract_json: bool = Form(True)
 ):
+    doc_type = canonicalize_doc_type(doc_type)
     request_id = uuid.uuid4().hex[:8]
     request_started_at = time.time()
     filename = file.filename or "uploaded_file"
@@ -3382,7 +4942,7 @@ def run_claims_ocr(
 @router.post("/extract-json")
 async def extract_claims_json(request: Request):
     payload = await request.json()
-    doc_type = payload.get("doc_type", "DEATH_CERTIFICATE")
+    doc_type = canonicalize_doc_type(payload.get("doc_type", "DEATH_CERTIFICATE"))
     pages_result = payload.get("pages") or []
     filename = payload.get("filename") or "uploaded_file"
     request_id = payload.get("request_id") or uuid.uuid4().hex[:8]
@@ -3413,10 +4973,17 @@ async def start_claims_pipeline(
     doc_types: List[str] = Form(...),
 ):
     ensure_pipeline_workers_started()
+    raw_doc_types = list(doc_types or [])
+    doc_types = normalize_doc_type_list(doc_types or [])
+    print(f"[PIPELINE INPUT] raw_doc_types={raw_doc_types} normalized_doc_types={doc_types}")
     if len(files) != len(doc_types):
         raise HTTPException(
             status_code=400,
-            detail="files and doc_types must have the same length."
+            detail=(
+                f"files and doc_types must have the same length. "
+                f"Received files={len(files)} doc_types={len(doc_types)}. "
+                "If Swagger sent doc_types as CSV, use separate items or keep comma values; server now splits them."
+            )
         )
 
     batch_id = uuid.uuid4().hex

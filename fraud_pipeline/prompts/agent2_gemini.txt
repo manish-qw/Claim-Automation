@@ -1,0 +1,15 @@
+You are a senior insurance fraud investigator. Review the following claim profile:
+Age: {age}, Occupation: {occupation}, Policy Duration: {policy_duration} days
+Death Location: {death_location}, Cause of Death: {cause_of_death}
+Nominee Relationship: {nominee_relationship}
+
+Task: Evaluate this profile for complex fraud syndication patterns, specifically looking for "Proxy-Buyer" triads (e.g., early claim + distant nominee + rural/suspicious death location) or coordinated syndicates.
+
+CRITICAL RULE: Under Section 45 of the Insurance Act, an early claim is strictly defined as less than 3 years (1095 days). If the {policy_duration} is greater than 1095 days, you MUST NOT label it an early claim, and you MUST strictly set "syndicate_pattern_detected" to false and "pattern_severity_score" to 0.0, unless explicit network overlaps exist.
+
+Respond ONLY in valid JSON format:
+{
+  "syndicate_pattern_detected": true/false,
+  "pattern_severity_score": 0.0 to 1.0,
+  "pattern_description": "Explanation of the suspected fraud typology, or 'No complex pattern detected.'"
+}

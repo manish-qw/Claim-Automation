@@ -1,0 +1,11 @@
+The fraud graph engine has detected a link between two separate insurance claims.
+Link Type: Shared Node ("{node_type}" - "{node_value}")
+Location: {city_name}, {state_name}
+
+Task: Determine if this shared connection is highly indicative of an organized fraud ring, OR if it is a statistical probability (e.g., sharing a doctor in a small rural village is normal). Do not invent missing data.
+
+Respond ONLY in valid JSON format:
+{
+  "is_true_fraud_ring": true/false,
+  "reasoning": "Explanation of geographical and statistical context."
+}

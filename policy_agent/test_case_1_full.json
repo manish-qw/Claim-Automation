@@ -1,0 +1,122 @@
+{
+    "claim_case_id": "CLM-001",
+    "status": "success",
+    "result": {
+        "claim_case_id": "CLM-001",
+        "fraud_analysis": {
+            "confidence_score": 0.9744,
+            "trust_score": 0.7308,
+            "validation_flags": [],
+            "audit_reference": "AUD-3B83DC880A5F",
+            "created_at": "2026-05-25T17:35:24.152977+00:00",
+            "fraud_risk_score": 0.2692,
+            "fraud_risk_level": "LOW",
+            "fraud_reasons": [],
+            "anomaly_score": 0.8975,
+            "suspicious_nominee": false,
+            "recommended_action": "APPROVE"
+        },
+        "trust_analysis": {
+            "confidence_score": 0.8258,
+            "trust_score": 0.8258,
+            "validation_flags": [],
+            "audit_reference": "AUD-68D12208B315",
+            "created_at": "2026-05-25T17:35:56.061839+00:00",
+            "ocr_trust_score": 0.95,
+            "external_trust_score": 1,
+            "fraud_confidence_score": 0.9744,
+            "overall_trust_score": 0.8258,
+            "human_review_required": false,
+            "trust_breakdown": {},
+            "automation_decision": "HOLD",
+            "automation_eligible": false,
+            "trust_reduction_reasons": [
+                "Unresolved document conflict \u2014 trust reduced"
+            ]
+        },
+        "external_verification": {
+            "confidence_score": 1,
+            "trust_score": 1,
+            "validation_flags": [],
+            "audit_reference": "AUD-5C07B978E2BD",
+            "created_at": "2026-05-25T17:35:24.143033+00:00",
+            "hospital_verified": true,
+            "doctor_verified": true,
+            "fir_verified": true,
+            "metadata_tampered": false,
+            "image_manipulation_detected": false,
+            "geo_location_match": true,
+            "verification_confidence": 1,
+            "hospital_verification_detail": null,
+            "fir_verification_detail": null,
+            "metadata_issues": []
+        },
+        "early_claim_analysis": {
+            "confidence_score": 0.4,
+            "trust_score": 0.85,
+            "validation_flags": [],
+            "audit_reference": "AUD-9FAA6C2459B1",
+            "created_at": "2026-05-25T17:35:24.152977+00:00",
+            "policy_age_days": 1800,
+            "policy_revival_detected": false,
+            "days_since_revival": null,
+            "premium_irregularities": false,
+            "lapsed_periods": [],
+            "early_claim_risk": "LOW",
+            "risk_factors": []
+        },
+        "non_disclosure_analysis": {
+            "confidence_score": 0.3,
+            "trust_score": 0.9,
+            "validation_flags": [],
+            "audit_reference": "AUD-0D750C2420D5",
+            "created_at": "2026-05-25T17:35:56.060806+00:00",
+            "contradiction_detected": false,
+            "non_disclosure_findings": [],
+            "non_disclosure_score": 0,
+            "proposal_disclosures": {},
+            "medical_findings": {},
+            "proposal_claims": [],
+            "medical_facts": [
+                "heart disease"
+            ]
+        },
+        "conflict_resolution": {
+            "confidence_score": 0.6,
+            "trust_score": 0.45,
+            "validation_flags": [
+                "CONFLICT_DETECTED"
+            ],
+            "audit_reference": "AUD-E742A85321DF",
+            "created_at": "2026-05-25T17:35:56.061839+00:00",
+            "conflict_detected": true,
+            "conflicts": [],
+            "conflicts_found": [
+                "cause_of_death: death_certificate says 'Cardiac Arrest' vs medical_report says 'Heart Disease'"
+            ],
+            "resolved_action": "ESCALATE",
+            "winning_source": "ESCALATED",
+            "resolution_rationale": null,
+            "resolution_reasoning": "Tie detected \u2014 human review required"
+        },
+        "graph_analysis": {
+            "confidence_score": 0.6,
+            "trust_score": 1,
+            "validation_flags": [],
+            "audit_reference": "AUD-3155A5C308A6",
+            "created_at": "2026-05-25T17:35:56.065357+00:00",
+            "connected_claims": 0,
+            "shared_nominees": 0,
+            "shared_bank_accounts": 0,
+            "shared_hospitals": 0,
+            "high_risk_relationships": [],
+            "fraud_ring_detected": false,
+            "network_risk_score": 0,
+            "graph_risk_score": 0
+        },
+        "final_recommendation": "ESCALATE",
+        "escalation_required": true,
+        "pipeline_duration_ms": null,
+        "created_at": "2026-05-25T17:35:56.065357+00:00"
+    }
+}

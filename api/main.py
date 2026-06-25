@@ -9,6 +9,11 @@ load_dotenv()
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers.claims import router as claims_router
+try:
+    from api.routers.fraud_bridge import router as fraud_bridge_router
+except Exception as exc:
+    fraud_bridge_router = None
+    print(f"[FRAUD BRIDGE] disabled at startup: {exc}")
 
 app = FastAPI(
     title="CLAIMOS AI — Claim Automation API",
@@ -32,6 +37,8 @@ app.add_middleware(
 
 # Mount Routers
 app.include_router(claims_router, prefix="/v1/claims", tags=["Claims"])
+if fraud_bridge_router is not None:
+    app.include_router(fraud_bridge_router)
 
 @app.get("/health")
 async def health_check():

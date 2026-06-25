@@ -5,8 +5,8 @@
     "file_name": "",
     "uploaded_by": "",
     "uploaded_at": "",
-    "ocr_confidence": 0.0,
-    "trust_score": 0.0,
+    "ocr_confidence": 0,
+    "trust_score": 0,
     "document_language": "",
     "pages": 0,
     "is_handwritten": false,
@@ -14,148 +14,692 @@
     "is_tampered": false,
     "verification_status": "",
     "validation_flags": [],
-    "DocumentType": "ClaimantStatementForm",
     "LifeAssured": {
-      "Name": {},
-      "FatherOrHusbandName": {},
-      "DateOfDeath": {},
-      "DateOfCremation": {},
-      "DateOfAccident": {},
-      "CauseOfDeath": {},
-      "NatureOfDeath": {},
-      "PlaceOfDeath": {},
-      "IntimationDate": {},
-      "PlaceOfIntimationOfDeath": {},
-      "OccupationCategory": {},
-      "EmployerName": {},
-      "EmployerAddress": {},
-      "Designation": {},
-      "LastWorkingDate": {},
-      "EmployerContactPerson": {},
-      "EmployerContactNumber": {}
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "FatherOrHusbandName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfCremation": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfAccident": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "CauseOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "NatureOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PlaceOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IntimationDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PlaceOfIntimationOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "OccupationCategory": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmployerName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmployerAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Designation": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LastWorkingDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmployerContactPerson": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmployerContactNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Medical": {
-      "DiagnosisDate": {},
-      "AdmissionDate": {},
-      "DischargeDate": {},
-      "HospitalizationInLast5Years": {},
-      "HospitalizationDetails": {},
-      "CancerHistory": {},
-      "HeartDiseaseHistory": {},
-      "LiverDiseaseHistory": {},
-      "KidneyDiseaseHistory": {},
-      "LungDiseaseHistory": {},
-      "HypertensionOrDiabetesHistory": {},
-      "OtherDiseaseHistory": {},
-      "DiseaseDiagnosisDate": {}
+      "DiagnosisDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AdmissionDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DischargeDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HospitalizationInLast5Years": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HospitalizationDetails": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "CancerHistory": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HeartDiseaseHistory": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LiverDiseaseHistory": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "KidneyDiseaseHistory": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LungDiseaseHistory": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HypertensionOrDiabetesHistory": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "OtherDiseaseHistory": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DiseaseDiagnosisDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Lifestyle": {
-      "SmokingDuration": {},
-      "SmokingQuantity": {},
-      "TobaccoDuration": {},
-      "TobaccoQuantity": {},
-      "DrugIntakeDuration": {},
-      "DrugIntakeQuantity": {}
+      "SmokingDuration": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SmokingQuantity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "TobaccoDuration": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "TobaccoQuantity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DrugIntakeDuration": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DrugIntakeQuantity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Hospital": {
-      "HospitalId": {},
-      "Name": {},
-      "Address": {},
-      "MobileNumber": {},
-      "AlternateMobileNumber": {},
-      "LandlineNumber": {},
-      "EmailId": {}
+      "HospitalId": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Address": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AlternateMobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LandlineNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmailId": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "TreatingDoctor": {
-      "Name": {},
-      "RegistrationNumber": {},
-      "MobileNumber": {},
-      "LandlineNumber": {},
-      "EmailId": {}
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "RegistrationNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LandlineNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmailId": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "FamilyDoctor": {
-      "Name": {},
-      "RegistrationNumber": {},
-      "MobileNumber": {},
-      "LandlineNumber": {},
-      "EmailId": {}
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "RegistrationNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LandlineNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmailId": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "LastAttendingDoctor": {
-      "Name": {},
-      "RegistrationNumber": {},
-      "MobileNumber": {},
-      "LandlineNumber": {},
-      "EmailId": {}
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "RegistrationNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LandlineNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmailId": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Police": {
-      "PoliceStationName": {},
-      "PoliceStationAddress": {}
+      "PoliceStationName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PoliceStationAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Claimant": {
-      "Name": {},
-      "FatherName": {},
-      "DateOfBirth": {},
-      "Gender": {},
-      "Occupation": {},
-      "RelationshipWithLifeAssured": {},
-      "PAN": {},
-      "MobileNumber": {},
-      "AlternateMobileNumber": {},
-      "LandlineNumber": {},
-      "EmailId": {},
-      "HouseOrFlatNumber": {},
-      "BuildingName": {},
-      "Street": {},
-      "AreaOrLocality": {},
-      "VillageTownCity": {},
-      "District": {},
-      "State": {},
-      "Country": {},
-      "Pincode": {},
-      "Nationality": {},
-      "IsNRI": {},
-      "IsPoliticallyExposedPerson": {}
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "FatherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Gender": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Occupation": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "RelationshipWithLifeAssured": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PAN": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AlternateMobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LandlineNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmailId": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HouseOrFlatNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BuildingName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Street": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AreaOrLocality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "VillageTownCity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "District": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "State": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Country": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Pincode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Nationality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IsNRI": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IsPoliticallyExposedPerson": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Bank": {
-      "AccountHolderName": {},
-      "AccountNumber": {},
-      "BankName": {},
-      "BranchName": {},
-      "IFSCCode": {},
-      "MICRCode": {},
-      "AccountType": {}
+      "AccountHolderName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AccountNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BankName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BranchName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IFSCCode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MICRCode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AccountType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Insurance": {
       "PolicyNumbers": [],
       "OtherInsurancePolicies": [
         {
-          "PolicyNumber": {},
-          "CompanyName": {},
-          "SumAssured": {},
-          "PolicyStatus": {}
+          "PolicyNumber": {
+            "value": null,
+            "ocr_confidence": null,
+            "extraction_confidence": null,
+            "source_text": null
+          },
+          "CompanyName": {
+            "value": null,
+            "ocr_confidence": null,
+            "extraction_confidence": null,
+            "source_text": null
+          },
+          "SumAssured": {
+            "value": null,
+            "ocr_confidence": null,
+            "extraction_confidence": null,
+            "source_text": null
+          },
+          "PolicyStatus": {
+            "value": null,
+            "ocr_confidence": null,
+            "extraction_confidence": null,
+            "source_text": null
+          }
         }
       ]
     },
     "Payout": {
-      "SelectedBenefitOption": {},
-      "SelectedPayoutOption": {},
-      "IncomeInstallmentPeriod": {},
-      "IncomePaymentMode": {},
-      "IncomePercentage": {},
-      "LumpsumPercentage": {}
+      "SelectedBenefitOption": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SelectedPayoutOption": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IncomeInstallmentPeriod": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IncomePaymentMode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IncomePercentage": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LumpsumPercentage": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Witness": {
-      "Name": {},
-      "Relationship": {},
-      "MobileNumber": {},
-      "Address": {}
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Relationship": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Address": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Declarant": {
-      "Name": {},
-      "Relationship": {},
-      "MobileNumber": {},
-      "Address": {},
-      "LanguageExplainedIn": {}
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Relationship": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Address": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LanguageExplainedIn": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "AdditionalRemarks": [],
     "LowConfidenceFields": [],
@@ -167,8 +711,8 @@
     "file_name": "",
     "uploaded_by": "",
     "uploaded_at": "",
-    "ocr_confidence": 0.0,
-    "trust_score": 0.0,
+    "ocr_confidence": 0,
+    "trust_score": 0,
     "document_language": "",
     "pages": 0,
     "is_handwritten": false,
@@ -176,76 +720,345 @@
     "is_tampered": false,
     "verification_status": "",
     "validation_flags": [],
-    "DocumentType": "DeathCertificate",
     "Deceased": {
-      "Name": {},
-      "Gender": {},
-      "DateOfBirth": {},
-      "AgeAtDeath": {},
-      "DateOfDeath": {},
-      "TimeOfDeath": {},
-      "DateOfCremation": {},
-      "DateOfAccident": {},
-      "CauseOfDeath": {}
+      "Name": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Gender": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AgeAtDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "TimeOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfCremation": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfAccident": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "CauseOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Identifiers": {
-      "DeceasedAadhaarNumber": {},
-      "UIDOfDeceased": {}
+      "DeceasedAadhaarNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "UIDOfDeceased": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Family": {
-      "FatherName": {},
-      "FatherAadhaarNumber": {},
-      "MotherName": {},
-      "MotherAadhaarNumber": {},
-      "SpouseName": {},
-      "SpouseAadhaarNumber": {}
+      "FatherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "FatherAadhaarNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MotherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MotherAadhaarNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SpouseName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SpouseAadhaarNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "DeathLocation": {
-      "PlaceOfDeath": {},
-      "InstitutionName": {},
-      "InstitutionType": {},
-      "InstitutionAddress": {}
+      "PlaceOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "InstitutionName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "InstitutionType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "InstitutionAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Addresses": {
-      "AddressAtTimeOfDeath": {},
-      "PermanentAddress": {},
-      "HouseOrFlatNumber": {},
-      "BuildingName": {},
-      "Street": {},
-      "AreaOrLocality": {},
-      "VillageTownCity": {},
-      "Locality": {},
-      "SubDistrict": {},
-      "District": {},
-      "State": {},
-      "Country": {},
-      "Pincode": {}
+      "AddressAtTimeOfDeath": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PermanentAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HouseOrFlatNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BuildingName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Street": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AreaOrLocality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "VillageTownCity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Locality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SubDistrict": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "District": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "State": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Country": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Pincode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Registration": {
-      "RegistrationNumber": {},
-      "ApplicationNumber": {},
-      "DateOfRegistration": {},
-      "DateOfIssue": {},
-      "IssueTehsil": {},
-      "IssueVillage": {},
-      "UpdatedOn": {},
-      "Remarks": {}
+      "RegistrationNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "ApplicationNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfRegistration": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfIssue": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IssueTehsil": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IssueVillage": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "UpdatedOn": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Remarks": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "IssuingAuthority": {
-      "AuthorityName": {},
-      "AuthorityDesignation": {},
-      "IssuingOfficerPositionName": {},
-      "OfficeName": {},
-      "LocalBodyName": {},
-      "District": {},
-      "State": {}
+      "AuthorityName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AuthorityDesignation": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IssuingOfficerPositionName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "OfficeName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LocalBodyName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "District": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "State": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "CertificateMetadata": {
-      "FormNumber": {},
-      "CertificateType": {},
-      "QRCodePresent": {},
-      "BarcodePresent": {},
-      "DigitalCertificate": {}
+      "FormNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "CertificateType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "QRCodePresent": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BarcodePresent": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DigitalCertificate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "AdditionalRemarks": [],
     "LowConfidenceFields": [],
@@ -257,8 +1070,8 @@
     "file_name": "",
     "uploaded_by": "",
     "uploaded_at": "",
-    "ocr_confidence": 0.0,
-    "trust_score": 0.0,
+    "ocr_confidence": 0,
+    "trust_score": 0,
     "document_language": "",
     "pages": 0,
     "is_handwritten": false,
@@ -266,51 +1079,215 @@
     "is_tampered": false,
     "verification_status": "",
     "validation_flags": [],
-    "DocumentType": "AadhaarCard",
     "Person": {
-      "FullName": {},
-      "Gender": {},
-      "DateOfBirth": {},
-      "YearOfBirth": {},
-      "Age": {}
+      "FullName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Gender": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "YearOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Age": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Identifiers": {
-      "AadhaarNumber": {},
-      "MaskedAadhaarNumber": {},
-      "VID": {},
-      "EnrollmentNumber": {}
+      "AadhaarNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MaskedAadhaarNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "VID": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EnrollmentNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Family": {
-      "FatherName": {},
-      "MotherName": {},
-      "SpouseName": {},
-      "GuardianName": {},
-      "RelationshipType": {}
+      "FatherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MotherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SpouseName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "GuardianName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "RelationshipType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Address": {
-      "FullAddress": {},
-      "CareOf": {},
-      "HouseOrFlatNumber": {},
-      "BuildingName": {},
-      "Street": {},
-      "AreaOrLocality": {},
-      "VillageTownCity": {},
-      "PostOffice": {},
-      "SubDistrict": {},
-      "District": {},
-      "State": {},
-      "Country": {},
-      "Pincode": {}
+      "FullAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "CareOf": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HouseOrFlatNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BuildingName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Street": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AreaOrLocality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "VillageTownCity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PostOffice": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SubDistrict": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "District": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "State": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Country": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Pincode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Contact": {
-      "MobileNumber": {},
-      "EmailId": {}
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EmailId": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Metadata": {
-      "IssueDate": {},
-      "DownloadDate": {},
-      "Language": {},
-      "AadhaarType": {}
+      "IssueDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DownloadDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Language": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AadhaarType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "AdditionalRemarks": [],
     "LowConfidenceFields": [],
@@ -322,8 +1299,8 @@
     "file_name": "",
     "uploaded_by": "",
     "uploaded_at": "",
-    "ocr_confidence": 0.0,
-    "trust_score": 0.0,
+    "ocr_confidence": 0,
+    "trust_score": 0,
     "document_language": "",
     "pages": 0,
     "is_handwritten": false,
@@ -331,53 +1308,227 @@
     "is_tampered": false,
     "verification_status": "",
     "validation_flags": [],
-    "DocumentType": "Passport",
     "Person": {
-      "FullName": {},
-      "Surname": {},
-      "GivenNames": {},
-      "Gender": {},
-      "Nationality": {},
-      "DateOfBirth": {},
-      "PlaceOfBirth": {}
+      "FullName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Surname": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "GivenNames": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Gender": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Nationality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PlaceOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Passport": {
-      "PassportNumber": {},
-      "PassportType": {},
-      "CountryCode": {},
-      "DateOfIssue": {},
-      "DateOfExpiry": {},
-      "PlaceOfIssue": {},
-      "FileNumber": {},
-      "PreviousPassportNumber": {},
-      "PreviousPassportIssueDate": {},
-      "PreviousPassportIssuePlace": {}
+      "PassportNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PassportType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "CountryCode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfIssue": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfExpiry": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PlaceOfIssue": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "FileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PreviousPassportNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PreviousPassportIssueDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PreviousPassportIssuePlace": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Family": {
-      "FatherName": {},
-      "MotherName": {},
-      "SpouseName": {},
-      "LegalGuardianName": {}
+      "FatherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MotherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SpouseName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "LegalGuardianName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Address": {
-      "FullAddress": {},
-      "HouseOrFlatNumber": {},
-      "BuildingName": {},
-      "Street": {},
-      "AreaOrLocality": {},
-      "VillageTownCity": {},
-      "District": {},
-      "State": {},
-      "Country": {},
-      "Pincode": {}
+      "FullAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HouseOrFlatNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BuildingName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Street": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AreaOrLocality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "VillageTownCity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "District": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "State": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Country": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Pincode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Identifiers": {
-      "NationalIdentityNumber": {},
-      "AadhaarNumber": {}
+      "NationalIdentityNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AadhaarNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "TravelDocument": {
-      "MRZLine1": {},
-      "MRZLine2": {}
+      "MRZLine1": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MRZLine2": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "AdditionalRemarks": [],
     "LowConfidenceFields": [],
@@ -389,8 +1540,8 @@
     "file_name": "",
     "uploaded_by": "",
     "uploaded_at": "",
-    "ocr_confidence": 0.0,
-    "trust_score": 0.0,
+    "ocr_confidence": 0,
+    "trust_score": 0,
     "document_language": "",
     "pages": 0,
     "is_handwritten": false,
@@ -398,63 +1549,267 @@
     "is_tampered": false,
     "verification_status": "",
     "validation_flags": [],
-    "DocumentType": "DrivingLicence",
     "Person": {
-      "FullName": {},
-      "DateOfBirth": {},
-      "Gender": {},
-      "BloodGroup": {},
-      "OrganDonor": {}
+      "FullName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Gender": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BloodGroup": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "OrganDonor": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Identifiers": {
-      "DrivingLicenceNumber": {},
-      "ReferenceNumber": {},
-      "FileNumber": {}
+      "DrivingLicenceNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "ReferenceNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "FileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Family": {
-      "FatherName": {},
-      "MotherName": {},
-      "SpouseName": {},
-      "GuardianName": {},
-      "RelationshipType": {}
+      "FatherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MotherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SpouseName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "GuardianName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "RelationshipType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Address": {
-      "PresentAddress": {},
-      "PermanentAddress": {},
-      "HouseOrFlatNumber": {},
-      "BuildingName": {},
-      "Street": {},
-      "AreaOrLocality": {},
-      "VillageTownCity": {},
-      "District": {},
-      "State": {},
-      "Country": {},
-      "Pincode": {}
+      "PresentAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PermanentAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HouseOrFlatNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BuildingName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Street": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AreaOrLocality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "VillageTownCity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "District": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "State": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Country": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Pincode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Licence": {
-      "IssuingAuthority": {},
-      "IssuingRTO": {},
-      "IssueDate": {},
-      "FirstIssueDate": {},
-      "ValidFrom": {},
-      "ValidTo": {},
-      "NonTransportValidity": {},
-      "TransportValidity": {},
-      "HazardousValidity": {},
-      "HillValidity": {}
+      "IssuingAuthority": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IssuingRTO": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IssueDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "FirstIssueDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "ValidFrom": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "ValidTo": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "NonTransportValidity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "TransportValidity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HazardousValidity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HillValidity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "VehicleAuthorizations": [
       {
-        "VehicleClass": {},
-        "VehicleCode": {},
-        "IssueDate": {},
-        "VehicleCategory": {},
-        "BadgeNumber": {},
-        "BadgeIssueDate": {}
+        "VehicleClass": {
+          "value": null,
+          "ocr_confidence": null,
+          "extraction_confidence": null,
+          "source_text": null
+        },
+        "VehicleCode": {
+          "value": null,
+          "ocr_confidence": null,
+          "extraction_confidence": null,
+          "source_text": null
+        },
+        "IssueDate": {
+          "value": null,
+          "ocr_confidence": null,
+          "extraction_confidence": null,
+          "source_text": null
+        },
+        "VehicleCategory": {
+          "value": null,
+          "ocr_confidence": null,
+          "extraction_confidence": null,
+          "source_text": null
+        },
+        "BadgeNumber": {
+          "value": null,
+          "ocr_confidence": null,
+          "extraction_confidence": null,
+          "source_text": null
+        },
+        "BadgeIssueDate": {
+          "value": null,
+          "ocr_confidence": null,
+          "extraction_confidence": null,
+          "source_text": null
+        }
       }
     ],
     "EmergencyContact": {
-      "MobileNumber": {}
+      "MobileNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "AdditionalRemarks": [],
     "LowConfidenceFields": [],
@@ -466,8 +1821,8 @@
     "file_name": "",
     "uploaded_by": "",
     "uploaded_at": "",
-    "ocr_confidence": 0.0,
-    "trust_score": 0.0,
+    "ocr_confidence": 0,
+    "trust_score": 0,
     "document_language": "",
     "pages": 0,
     "is_handwritten": false,
@@ -475,56 +1830,235 @@
     "is_tampered": false,
     "verification_status": "",
     "validation_flags": [],
-    "DocumentType": "VoterID",
     "Person": {
-      "FullName": {},
-      "Gender": {},
-      "DateOfBirth": {},
-      "Age": {},
-      "PhotoPresent": {}
+      "FullName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Gender": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Age": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PhotoPresent": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Identifiers": {
-      "EPICNumber": {},
-      "VoterIDNumber": {}
+      "EPICNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "VoterIDNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Family": {
-      "FatherName": {},
-      "MotherName": {},
-      "SpouseName": {},
-      "GuardianName": {},
-      "RelationshipType": {}
+      "FatherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MotherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SpouseName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "GuardianName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "RelationshipType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Address": {
-      "FullAddress": {},
-      "HouseOrFlatNumber": {},
-      "BuildingName": {},
-      "Street": {},
-      "AreaOrLocality": {},
-      "VillageTownCity": {},
-      "District": {},
-      "State": {},
-      "Country": {},
-      "Pincode": {}
+      "FullAddress": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "HouseOrFlatNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BuildingName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Street": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AreaOrLocality": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "VillageTownCity": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "District": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "State": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Country": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Pincode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "ElectoralDetails": {
-      "AssemblyConstituencyNumber": {},
-      "AssemblyConstituencyName": {},
-      "ParliamentaryConstituency": {},
-      "PartNumber": {},
-      "SerialNumberInElectoralRoll": {},
-      "PollingStationName": {}
+      "AssemblyConstituencyNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AssemblyConstituencyName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "ParliamentaryConstituency": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PartNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SerialNumberInElectoralRoll": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "PollingStationName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "IssuingAuthority": {
-      "ElectoralRegistrationOfficer": {},
-      "EROOffice": {},
-      "IssueDate": {},
-      "DownloadDate": {}
+      "ElectoralRegistrationOfficer": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "EROOffice": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IssueDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DownloadDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "CertificateMetadata": {
-      "QRCodePresent": {},
-      "BarcodePresent": {},
-      "DigitalEPIC": {},
-      "Language": {}
+      "QRCodePresent": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BarcodePresent": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DigitalEPIC": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Language": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "AdditionalRemarks": [],
     "LowConfidenceFields": [],
@@ -536,8 +2070,8 @@
     "file_name": "",
     "uploaded_by": "",
     "uploaded_at": "",
-    "ocr_confidence": 0.0,
-    "trust_score": 0.0,
+    "ocr_confidence": 0,
+    "trust_score": 0,
     "document_language": "",
     "pages": 0,
     "is_handwritten": false,
@@ -545,29 +2079,93 @@
     "is_tampered": false,
     "verification_status": "",
     "validation_flags": [],
-    "DocumentType": "PANCard",
     "Person": {
-      "FullName": {},
-      "DateOfBirth": {},
-      "Gender": {}
+      "FullName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DateOfBirth": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "Gender": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Identifiers": {
-      "PANNumber": {}
+      "PANNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "Family": {
-      "FatherName": {},
-      "MotherName": {},
-      "SpouseName": {},
-      "GuardianName": {},
-      "RelationshipType": {}
+      "FatherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MotherName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "SpouseName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "GuardianName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "RelationshipType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "IssuingAuthority": {
-      "AuthorityName": {},
-      "IssueDate": {}
+      "AuthorityName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IssueDate": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "CertificateMetadata": {
-      "CardVersion": {},
-      "DigitalPAN": {}
+      "CardVersion": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "DigitalPAN": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "AdditionalRemarks": [],
     "LowConfidenceFields": [],
@@ -579,8 +2177,8 @@
     "file_name": "",
     "uploaded_by": "",
     "uploaded_at": "",
-    "ocr_confidence": 0.0,
-    "trust_score": 0.0,
+    "ocr_confidence": 0,
+    "trust_score": 0,
     "document_language": "",
     "pages": 0,
     "is_handwritten": false,
@@ -588,15 +2186,49 @@
     "is_tampered": false,
     "verification_status": "",
     "validation_flags": [],
-    "DocumentType": "BankProof",
     "Bank": {
-      "AccountHolderName": {},
-      "AccountNumber": {},
-      "BankName": {},
-      "BranchName": {},
-      "IFSCCode": {},
-      "MICRCode": {},
-      "AccountType": {}
+      "AccountHolderName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AccountNumber": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BankName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "BranchName": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "IFSCCode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "MICRCode": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      },
+      "AccountType": {
+        "value": null,
+        "ocr_confidence": null,
+        "extraction_confidence": null,
+        "source_text": null
+      }
     },
     "AdditionalRemarks": [],
     "LowConfidenceFields": [],

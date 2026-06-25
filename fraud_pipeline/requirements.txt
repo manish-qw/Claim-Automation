@@ -1,0 +1,49 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+python-dotenv==1.0.1
+
+# AI / LLM
+langchain
+langchain-google-genai
+langchain-openai==0.1.8
+langchain-core
+langgraph==0.0.62
+
+# ML / Fraud Detection
+scikit-learn==1.4.2
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.0
+
+# Embeddings / NLP
+sentence-transformers==3.0.0
+torch==2.3.0
+scispacy>=0.5.3
+https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.3/en_core_sci_sm-0.5.3.tar.gz
+
+# Graph
+networkx==3.3
+neo4j==5.20.0
+
+# Databases
+asyncpg==0.29.0
+sqlalchemy[asyncio]==2.0.30
+psycopg2-binary==2.9.9
+redis==5.0.4
+aioredis==2.0.1
+
+# Image / Metadata Forensics
+Pillow==10.3.0
+pdfplumber>=0.11.0
+google-generativeai>=0.4.1
+exifread==3.0.0
+
+# HTTP
+httpx==0.27.0
+aiohttp==3.9.5
+requests>=2.31.0
+
+# Utilities
+python-dateutil==2.9.0
+structlog==24.1.0

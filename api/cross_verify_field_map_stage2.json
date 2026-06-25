@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "natural_death": {
+    "fields": {
+      "life_assured.name": { "label": "Life Assured Name", "kind": "name" },
+      "life_assured.date_of_death": { "label": "Life Assured Date Of Death", "kind": "date" },
+      "life_assured.cause_of_death": { "label": "Life Assured Cause Of Death", "kind": "text" },
+      "life_assured.place_of_death": { "label": "Life Assured Place Of Death", "kind": "text" },
+      "life_assured.occupation": { "label": "Life Assured Occupation", "kind": "text" },
+      "death.registration_number": { "label": "Death Registration Number", "kind": "id" },
+      "death.date_of_issue": { "label": "Death Date Of Issue", "kind": "date" },
+      "death.category": { "label": "Death Category", "kind": "text" },
+      "death.manner_of_death": { "label": "Manner Of Death", "kind": "text" },
+      "doctor.registration_number": { "label": "Doctor Registration Number", "kind": "id" },
+      "hospital.name": { "label": "Hospital Name", "kind": "text" }
+    },
+    "documents": {
+      "medico_legal_cause_of_death_certificate": {
+        "life_assured.name": ["Deceased.Name"],
+        "life_assured.date_of_death": ["Deceased.DateOfDeath"],
+        "life_assured.cause_of_death": ["CauseOfDeath.ImmediateCause", "CauseOfDeath.AntecedentCause", "CauseOfDeath.UnderlyingCause"],
+        "life_assured.place_of_death": ["Deceased.PlaceOfDeath"],
+        "death.registration_number": ["CertificateNumber"],
+        "death.date_of_issue": ["DateOfIssue"],
+        "death.category": ["DeathCategory"],
+        "death.manner_of_death": ["CauseOfDeath.MannerOfDeath"],
+        "doctor.registration_number": ["IssuingDoctor.RegistrationNumber"],
+        "hospital.name": ["Hospital.Name"]
+      },
+      "discharge_summary": {
+        "life_assured.name": ["Patient.Name"],
+        "life_assured.date_of_death": ["Discharge.DateOfDischargeOrDeath"],
+        "life_assured.cause_of_death": ["CauseOfDeath.ImmediateCause", "CauseOfDeath.UnderlyingCause", "Diagnosis.PrimaryDiagnosis"],
+        "death.category": ["DeathCategory"],
+        "doctor.registration_number": ["TreatingTeam.PrimaryDoctorRegistrationNumber"],
+        "hospital.name": ["Hospital.Name"]
+      },
+      "medical_attendant_hospital_certificate": {
+        "life_assured.name": ["LifeAssured.Name"],
+        "life_assured.date_of_death": ["Hospitalization.DateOfDischargeOrDeath"],
+        "life_assured.cause_of_death": ["DeathDetails.PrimaryCauseOfDeath", "DeathDetails.SecondaryCauseOfDeath", "Diagnosis.FinalDiagnosis"],
+        "death.category": ["DeathCategory"],
+        "hospital.name": ["Hospital.Name"]
+      },
+      "past_medical_records_and_treatment_papers": {
+        "life_assured.name": ["Patient.Name"],
+        "life_assured.cause_of_death": ["Record.DiagnosisOrConditionMentioned"],
+        "death.category": ["DeathCategory"]
+      },
+      "admission_form": {
+        "life_assured.name": ["Patient.Name"],
+        "life_assured.cause_of_death": ["Admission.AdmittingDiagnosis"],
+        "death.category": ["DeathCategory"],
+        "hospital.name": ["Hospital.Name"]
+      },
+      "indoor_case_papers": {
+        "life_assured.name": ["Patient.Name"],
+        "life_assured.date_of_death": ["Outcome.DateOfDischargeOrDeath"],
+        "life_assured.cause_of_death": ["CauseOfDeath.ImmediateCause", "CauseOfDeath.UnderlyingCause", "ClinicalFindings.PrimaryDiagnosis"],
+        "death.category": ["DeathCategory"],
+        "doctor.registration_number": ["TreatingTeam.PrimaryDoctorRegistrationNumber"],
+        "hospital.name": ["Hospital.Name"]
+      },
+      "diagnostic_test_report": {
+        "life_assured.name": ["Patient.Name"],
+        "life_assured.cause_of_death": ["Report.Conclusion", "Report.AbnormalFindings"],
+        "death.category": ["DeathCategory"],
+        "doctor.registration_number": ["Report.PathologistRegistrationNumber"]
+      },
+      "employer_certificate": {
+        "life_assured.name": ["LifeAssured.Name"],
+        "life_assured.occupation": ["LifeAssured.Designation", "LifeAssured.NatureOfWork"],
+        "hospital.name": ["Employer.Name"]
+      }
+    }
+  },
+  "unnatural_death": {
+    "fields": {
+      "life_assured.name": { "label": "Life Assured Name", "kind": "name" },
+      "life_assured.date_of_death": { "label": "Life Assured Date Of Death", "kind": "date" },
+      "life_assured.cause_of_death": { "label": "Life Assured Cause Of Death", "kind": "text" },
+      "life_assured.place_of_death": { "label": "Life Assured Place Of Death", "kind": "text" },
+      "death.fir_number": { "label": "FIR Number", "kind": "id" },
+      "death.registration_number": { "label": "Registration Number", "kind": "id" },
+      "death.category": { "label": "Death Category", "kind": "text" },
+      "death.manner_of_death": { "label": "Manner Of Death", "kind": "text" },
+      "doctor.registration_number": { "label": "Doctor Registration Number", "kind": "id" },
+      "hospital.name": { "label": "Hospital Name", "kind": "text" }
+    },
+    "documents": {
+      "first_information_report": {
+        "life_assured.name": ["Deceased.Name"],
+        "life_assured.date_of_death": ["Incident.Date", "DateOfFIR"],
+        "life_assured.cause_of_death": ["NatureOfIncident", "Incident.Description"],
+        "life_assured.place_of_death": ["Incident.Location"],
+        "death.fir_number": ["FIRNumber", "Registration.RegistrationNumber"],
+        "death.category": ["DeathCategory"]
+      },
+      "inquest_panchanana_report": {
+        "life_assured.name": ["Deceased.Name"],
+        "life_assured.date_of_death": ["Incident.DateOfDeath", "DateOfInquest"],
+        "life_assured.cause_of_death": ["SuspectedCauseOfDeath", "SceneObservations.InjuriesObserved"],
+        "life_assured.place_of_death": ["Incident.Location"],
+        "death.fir_number": ["FIRNumber"],
+        "death.category": ["DeathCategory"],
+        "death.manner_of_death": ["MannerOfDeath"]
+      },
+      "final_police_investigation_report": {
+        "life_assured.name": ["Deceased.Name"],
+        "life_assured.date_of_death": ["Incident.Date", "DateOfReport"],
+        "life_assured.cause_of_death": ["NatureOfDeath", "Incident.NatureOfIncident", "FinalConclusion"],
+        "life_assured.place_of_death": ["Incident.Location"],
+        "death.fir_number": ["FIRNumber"],
+        "death.category": ["DeathCategory"],
+        "death.manner_of_death": ["NatureOfDeath"]
+      },
+      "postmortem_report": {
+        "life_assured.name": ["Deceased.Name"],
+        "life_assured.date_of_death": ["Deceased.DateOfDeath", "DateOfPostmortem"],
+        "life_assured.cause_of_death": ["CauseOfDeath.ImmediateCause", "CauseOfDeath.UnderlyingCause", "CauseOfDeath.FinalOpinion"],
+        "death.fir_number": ["FIRNumber"],
+        "death.registration_number": ["PMRNumber"],
+        "death.category": ["DeathCategory"],
+        "death.manner_of_death": ["CauseOfDeath.MannerOfDeath"],
+        "doctor.registration_number": ["ConductingDoctor.RegistrationNumber"],
+        "hospital.name": ["Hospital.Name"]
+      },
+      "viscera_chemical_examination_report": {
+        "life_assured.name": ["Deceased.Name"],
+        "life_assured.cause_of_death": ["Findings.SubstancesDetected", "Conclusion"],
+        "death.fir_number": ["FIRNumber"],
+        "death.registration_number": ["ReportNumber"],
+        "death.category": ["DeathCategory"],
+        "doctor.registration_number": ["Examiner.RegistrationNumber"],
+        "hospital.name": ["Lab.Name"]
+      },
+      "newspaper_cutting": {
+        "life_assured.name": ["Deceased.Name"],
+        "life_assured.date_of_death": ["Incident.DateOfIncident", "Publication.PublicationDate"],
+        "life_assured.cause_of_death": ["Incident.NatureOfIncident", "Article.Headline"],
+        "life_assured.place_of_death": ["Incident.Location"],
+        "death.category": ["DeathCategory"]
+      }
+    }
+  }
+}

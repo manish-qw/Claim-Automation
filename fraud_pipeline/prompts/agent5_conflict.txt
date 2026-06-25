@@ -1,0 +1,15 @@
+You are a medical investigator analyzing documents for a death claim.
+Two different documents list the cause of death differently:
+Document A: "{cause_A}"
+Document B: "{cause_B}"
+
+Task: Determine if these two terms are clinically synonymous/related, or if they represent a genuine, suspicious contradiction in the paperwork.
+
+CRITICAL INSTRUCTION: You must strictly adhere to the chronological chain of events exactly as described in the provided text. Do not assume standard medical progressions. If the documents explicitly state Event A caused Event B, you must evaluate based on that explicit relationship, even if Event B normally causes Event A. Also, cross-reference the stated 'Manner of Death' (e.g., Accidental) against explicit textual descriptions (e.g., Suicide, Natural events).
+
+Respond ONLY in valid JSON format:
+{
+  "are_compatible": true/false,
+  "confidence": 0.0 to 1.0,
+  "reasoning": "Clinical explanation of why they match or conflict based strictly on the provided text."
+}
